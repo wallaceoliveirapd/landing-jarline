@@ -1,0 +1,2381 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Jarline Vieira — Arquitetura e Interiores</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500&family=Instrument+Sans:wght@400;500&display=swap"
+    rel="stylesheet">
+  <style>
+    /* ─── FONT ─────────────────────────────────────────────── */
+    @font-face {
+      font-family: 'Castle Rocks';
+      src: url('assets/fonts/CASTLEROCKS-Bold.ttf') format('truetype');
+      font-weight: 700;
+      font-display: swap;
+    }
+
+    /* ─── TOKENS (from DESIGN_SYSTEM.md) ───────────────────── */
+    :root {
+      --color-primary: #585947;
+      --color-primary-border: rgba(88, 89, 71, 0.35);
+      --color-cream: #e2e0d4;
+      --color-cream-light: #f6f5ed;
+      --color-white: #ffffff;
+      --color-text-body: #626262;
+      --color-text-muted: #8a8a80;
+
+      --font-display: 'Castle Rocks', serif;
+      --font-heading: 'Space Grotesk', sans-serif;
+      --font-ui: 'Instrument Sans', sans-serif;
+
+      --space-xs: 8px;
+      --space-sm: 16px;
+      --space-md: 24px;
+      --space-lg: 32px;
+      --space-xl: 40px;
+      --space-2xl: 56px;
+      --space-3xl: 72px;
+      --space-section: 80px;
+
+      --radius-button: 8px;
+      --radius-card: 16px;
+      --radius-avatar: 999px;
+
+      --container: 1128px;
+    }
+
+    /* ─── RESET ─────────────────────────────────────────────── */
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      overflow-x: hidden;
+      /* Safari/iOS: body alone is not enough */
+      max-width: 100%;
+    }
+
+    body {
+      font-family: var(--font-heading);
+      background: var(--color-white);
+      color: var(--color-primary);
+      overflow-x: hidden;
+      max-width: 100%;
+      cursor: none;
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;
+      cursor: none;
+    }
+
+    img {
+      display: block;
+      max-width: 100%;
+    }
+
+    button {
+      cursor: none;
+    }
+
+    /* ─── CUSTOM CURSOR ──────────────────────────────────────── */
+    .cursor {
+      position: fixed;
+      width: 7px;
+      height: 7px;
+      background: var(--color-primary);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 9999;
+      transform: translate(-50%, -50%);
+      transition: width .15s, height .15s, background .2s;
+      will-change: transform;
+    }
+
+    .cursor-ring {
+      position: fixed;
+      width: 38px;
+      height: 38px;
+      border: 1.5px solid rgba(88, 89, 71, .35);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 9998;
+      transform: translate(-50%, -50%);
+      transition: width .25s ease, height .25s ease, border-color .25s;
+      will-change: transform;
+    }
+
+    .cursor.hover {
+      width: 14px;
+      height: 14px;
+      background: var(--color-cream);
+    }
+
+    .cursor-ring.hover {
+      width: 54px;
+      height: 54px;
+      border-color: rgba(88, 89, 71, .55);
+    }
+
+    /* ─── SCROLL PROGRESS ────────────────────────────────────── */
+    #scroll-progress {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--color-primary), var(--color-cream));
+      width: 0%;
+      z-index: 9000;
+      transition: width .08s linear;
+    }
+
+    /* ─── CONTAINER ──────────────────────────────────────────── */
+    .container {
+      max-width: var(--container);
+      margin: 0 auto;
+      padding: 0;
+    }
+
+    .container-hero {
+      max-width: var(--container);
+      margin: 0 auto;
+      padding: 0;
+    }
+
+    /* ─── REVEAL ANIMATIONS ──────────────────────────────────── */
+    .reveal {
+      opacity: 0;
+      transform: translateY(28px);
+      transition: opacity .75s cubic-bezier(.22, 1, .36, 1), transform .75s cubic-bezier(.22, 1, .36, 1);
+    }
+
+    .reveal.in {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .reveal-l {
+      opacity: 0;
+      transform: translateX(-36px);
+      transition: opacity .75s cubic-bezier(.22, 1, .36, 1), transform .75s cubic-bezier(.22, 1, .36, 1);
+    }
+
+    .reveal-l.in {
+      opacity: 1;
+      transform: translateX(0);
+    }
+
+    .reveal-r {
+      opacity: 0;
+      transform: translateX(36px);
+      transition: opacity .75s cubic-bezier(.22, 1, .36, 1), transform .75s cubic-bezier(.22, 1, .36, 1);
+    }
+
+    .reveal-r.in {
+      opacity: 1;
+      transform: translateX(0);
+    }
+
+    .d1 {
+      transition-delay: .1s;
+    }
+
+    .d2 {
+      transition-delay: .2s;
+    }
+
+    .d3 {
+      transition-delay: .3s;
+    }
+
+    .d4 {
+      transition-delay: .4s;
+    }
+
+    .d5 {
+      transition-delay: .5s;
+    }
+
+    /* ─── BUTTONS ────────────────────────────────────────────── */
+    .btn {
+      font-family: var(--font-ui);
+      font-size: 14px;
+      font-weight: 500;
+      letter-spacing: 1.12px;
+      text-transform: uppercase;
+      padding: 16px 24px;
+      border-radius: var(--radius-button);
+      border: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      white-space: nowrap;
+      transition: transform .2s, box-shadow .2s, background .2s, border-color .2s;
+      line-height: normal;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: rgba(255, 255, 255, 0);
+      transition: background .2s;
+    }
+
+    .btn:hover::after {
+      background: rgba(255, 255, 255, .07);
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+    }
+
+    .btn:active {
+      transform: translateY(0);
+    }
+
+    .btn-primary {
+      background: var(--color-primary);
+      color: #fff;
+    }
+
+    .btn-primary:hover {
+      box-shadow: 0 8px 28px rgba(88, 89, 71, .28);
+    }
+
+    .btn-secondary {
+      background: var(--color-white);
+      color: var(--color-primary);
+      border: 1px solid var(--color-primary);
+    }
+
+    .btn-secondary:hover {
+      background: rgba(88, 89, 71, .04);
+      box-shadow: 0 8px 24px rgba(88, 89, 71, .1);
+    }
+
+    .btn-ghost-light {
+      background: transparent;
+      color: #fff;
+      border: 1px solid rgba(255, 255, 255, .5);
+    }
+
+    .btn-ghost-light:hover {
+      border-color: #fff;
+      background: rgba(255, 255, 255, .08);
+    }
+
+    .btn-cream {
+      background: var(--color-cream);
+      color: var(--color-primary);
+    }
+
+    .btn-cream:hover {
+      background: #d5d2c4;
+      box-shadow: 0 8px 24px rgba(88, 89, 71, .15);
+    }
+
+    .btn-icon {
+      background: transparent;
+      border: 1px solid rgba(226, 224, 212, .5);
+      color: var(--color-cream);
+      width: 48px;
+      height: 48px;
+      padding: 0;
+      border-radius: var(--radius-button);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: background .2s, border-color .2s, transform .2s;
+    }
+
+    .btn-icon:hover {
+      background: rgba(226, 224, 212, .12);
+      border-color: var(--color-cream);
+      transform: translateY(-2px);
+    }
+
+    .btn-icon svg {
+      width: 20px;
+      height: 20px;
+      stroke: var(--color-cream);
+    }
+
+    /* ─── SECTION HEADING ────────────────────────────────────── */
+    .section-heading {
+      font-family: var(--font-heading);
+      font-weight: 300;
+      font-size: 64px;
+      line-height: 1;
+      letter-spacing: -2.56px;
+    }
+
+    /* ════════════════════════════════════════════════════════════
+       NAVBAR
+    ════════════════════════════════════════════════════════════ */
+    .navbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 500;
+      height: 81px;
+      background: rgba(255, 255, 255, .96);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid transparent;
+      transition: border-color .3s, box-shadow .3s;
+    }
+
+    .navbar.scrolled {
+      border-bottom-color: rgba(88, 89, 71, .1);
+      box-shadow: 0 4px 32px rgba(88, 89, 71, .06);
+    }
+
+    .navbar-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 100%;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 46px;
+    }
+
+    .nav-link {
+      font-family: var(--font-ui);
+      font-size: 14px;
+      font-weight: 400;
+      letter-spacing: 1.12px;
+      text-transform: uppercase;
+      color: var(--color-primary);
+      position: relative;
+    }
+
+    .nav-link::after {
+      content: '';
+      position: absolute;
+      bottom: -3px;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: var(--color-primary);
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform .3s cubic-bezier(.22, 1, .36, 1);
+    }
+
+    .nav-link:hover::after {
+      transform: scaleX(1);
+    }
+
+    .nav-ctas {
+      display: flex;
+      gap: var(--space-xs);
+    }
+
+    /* ════════════════════════════════════════════════════════════
+       HERO
+    ════════════════════════════════════════════════════════════ */
+    .hero {
+      padding-top: calc(81px + 24px);
+      background: var(--color-white);
+    }
+
+    .hero-inner {
+      display: grid;
+      grid-template-columns: 548px 1fr;
+      gap: var(--space-lg);
+      align-items: stretch;
+    }
+
+    .hero-card {
+      background: var(--color-primary);
+      border-radius: var(--radius-card);
+      padding: var(--space-2xl);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-xl);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-card::before {
+      content: '';
+      position: absolute;
+      top: -80px;
+      right: -80px;
+      width: 280px;
+      height: 280px;
+      background: rgba(226, 224, 212, .04);
+      border-radius: 50%;
+      pointer-events: none;
+    }
+
+    .hero-card::after {
+      content: '';
+      position: absolute;
+      bottom: -60px;
+      left: -60px;
+      width: 200px;
+      height: 200px;
+      background: rgba(226, 224, 212, .03);
+      border-radius: 50%;
+      pointer-events: none;
+    }
+
+    .hero-text {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+
+    .hero-eyebrow {
+      font-weight: 300;
+      font-size: 14px;
+      letter-spacing: 1.68px;
+      text-transform: uppercase;
+      color: rgba(255, 255, 255, .65);
+      line-height: 1.4;
+    }
+
+    .hero-headline {
+      font-family: var(--font-display);
+      font-size: 55px;
+      line-height: 1;
+      letter-spacing: -2.2px;
+      color: var(--color-cream);
+      margin-top: 20px;
+    }
+
+    .hero-body {
+      font-size: 16px;
+      font-weight: 400;
+      line-height: 1.5;
+      letter-spacing: -0.64px;
+      color: rgba(255, 255, 255, .82);
+      max-width: 398px;
+      margin-top: 20px;
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: var(--space-sm);
+    }
+
+    .hero-image {
+      border-radius: var(--radius-card);
+      overflow: visible;
+      position: relative;
+      min-height: 467px;
+    }
+
+    .hero-image-bg {
+      position: absolute;
+      inset: 0;
+      background-size: cover;
+      background-position: center;
+      border-radius: var(--radius-card);
+      overflow: hidden;
+      transition: transform .6s ease;
+    }
+
+    .hero-image:hover .hero-image-bg {
+      transform: scale(1.03);
+    }
+
+    .hero-photo {
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-48%);
+      height: 108%;
+      width: auto;
+      object-fit: contain;
+      object-position: bottom;
+      transition: transform .5s ease;
+      filter: drop-shadow(0 -8px 32px rgba(88, 89, 71, .08));
+    }
+
+    .hero-image:hover .hero-photo {
+      transform: translateX(-48%) scale(1.02);
+    }
+
+    /* parallax targets */
+    .parallax-layer {
+      will-change: transform;
+    }
+
+    /* ════════════════════════════════════════════════════════════
+       STATS
+    ════════════════════════════════════════════════════════════ */
+    .stats {
+      padding: 32px 0 40px;
+      background: var(--color-white);
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: var(--space-lg);
+    }
+
+    .stat-card {
+      background: var(--color-white);
+      border: 1px solid var(--color-primary-border);
+      border-radius: var(--radius-card);
+      padding: var(--space-lg);
+      overflow: hidden;
+      transition: transform .3s ease, box-shadow .3s ease;
+    }
+
+    .stat-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 16px 40px rgba(88, 89, 71, .1);
+    }
+
+    .stat-value {
+      font-weight: 500;
+      font-size: 58px;
+      line-height: 1;
+      letter-spacing: -2.32px;
+      color: var(--color-primary);
+    }
+
+    .stat-label {
+      font-weight: 400;
+      font-size: 16px;
+      line-height: 1.3;
+      letter-spacing: -0.64px;
+      color: var(--color-primary);
+      margin-top: var(--space-xs);
+    }
+
+    /* ════════════════════════════════════════════════════════════
+       ABOUT
+    ════════════════════════════════════════════════════════════ */
+    .about {
+      padding: 32px 0 0;
+      background: var(--color-white);
+      overflow: visible;
+    }
+
+    .about-inner {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-lg);
+      align-items: end;
+    }
+
+    .about-text {
+      position: relative;
+      z-index: 2;
+      padding-bottom: 80px;
+    }
+
+    .about-intro {
+      font-weight: 300;
+      font-size: 42px;
+      line-height: 1;
+      letter-spacing: -1.68px;
+      color: var(--color-primary);
+    }
+
+    .about-name {
+      font-family: var(--font-display);
+      font-size: 64px;
+      line-height: 1;
+      letter-spacing: -2.56px;
+      color: var(--color-primary);
+      margin-top: var(--space-sm);
+    }
+
+    .about-bio {
+      font-size: 16px;
+      font-weight: 400;
+      line-height: 1.6;
+      letter-spacing: -0.64px;
+      color: var(--color-text-body);
+      margin-top: var(--space-md);
+    }
+
+    .about-bio p+p {
+      margin-top: 14px;
+    }
+
+    .about-image-wrap {
+      position: relative;
+      height: 600px;
+    }
+
+    .about-video {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 180%;
+      height: auto;
+      opacity: 1;
+      pointer-events: none;
+      z-index: 0;
+      object-fit: cover;
+    }
+
+    .about-photo {
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      height: 95%;
+      width: auto;
+      z-index: 1;
+      filter: drop-shadow(0 24px 48px rgba(88, 89, 71, .12));
+    }
+
+    /* ════════════════════════════════════════════════════════════
+       PROJECTS
+    ════════════════════════════════════════════════════════════ */
+    .projects {
+      background: var(--color-primary);
+      padding: var(--space-section) 0;
+      overflow: hidden;
+      z-index: 9;
+    }
+
+    .projects .section-heading {
+      color: #fff;
+      margin-bottom: 42px;
+    }
+
+    .carousel-wrap {
+      position: relative;
+    }
+
+    .carousel {
+      display: flex;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+      cursor: grab;
+    }
+
+    .carousel::-webkit-scrollbar {
+      display: none;
+    }
+
+    .carousel.grabbing {
+      cursor: grabbing;
+    }
+
+    .project-card {
+      flex-shrink: 0;
+      width: 376px;
+      height: 366px;
+      position: relative;
+      overflow: hidden;
+      scroll-snap-align: start;
+    }
+
+    .project-card-bg {
+      position: absolute;
+      inset: 0;
+      background-size: cover;
+      background-position: center;
+      transition: transform .55s ease;
+    }
+
+    .project-card:hover .project-card-bg {
+      transform: scale(1.06);
+    }
+
+    .project-overlay {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 248px;
+      background: linear-gradient(179.82deg, rgba(88, 89, 71, 0) 0.26%, rgba(88, 89, 71, .85) 61.63%);
+    }
+
+    .project-info {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: var(--space-lg);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-xs);
+      transform: translateY(4px);
+      transition: transform .35s ease;
+    }
+
+    .project-card:hover .project-info {
+      transform: translateY(0);
+    }
+
+    .project-title {
+      font-size: 24px;
+      font-weight: 400;
+      line-height: 1;
+      letter-spacing: -0.96px;
+      color: #fff;
+    }
+
+    .project-desc {
+      font-size: 14px;
+      font-weight: 400;
+      line-height: 1;
+      letter-spacing: -0.56px;
+      color: rgba(255, 255, 255, .78);
+    }
+
+    .carousel-nav {
+      display: flex;
+      justify-content: flex-end;
+      gap: var(--space-xs);
+      margin-top: 42px;
+    }
+
+    /* ════════════════════════════════════════════════════════════
+       SERVICES
+    ════════════════════════════════════════════════════════════ */
+    .services {
+      background: var(--color-cream);
+      padding: var(--space-section) 0;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .watermark-row {
+      position: absolute;
+      left: 0;
+      right: 0;
+      overflow: hidden;
+      pointer-events: none;
+      white-space: nowrap;
+      display: flex;
+    }
+
+    .watermark-row.top {
+      top: -20px;
+    }
+
+    .watermark-row.bottom {
+      bottom: -40px;
+    }
+
+    .watermark-track {
+      display: flex;
+      gap: 40px;
+      animation: marquee 40s linear infinite;
+      white-space: nowrap;
+    }
+
+    .watermark-row.bottom .watermark-track {
+      animation-direction: reverse;
+    }
+
+    @keyframes marquee {
+      0% {
+        transform: translateX(0);
+      }
+
+      100% {
+        transform: translateX(-50%);
+      }
+    }
+
+    .watermark-word {
+      font-weight: 300;
+      font-size: 220px;
+      line-height: 1;
+      letter-spacing: -8px;
+      color: rgba(255, 255, 255, .22);
+      flex-shrink: 0;
+    }
+
+    .services .section-heading {
+      color: var(--color-primary);
+      margin-bottom: 42px;
+    }
+
+    .services-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--space-lg);
+    }
+
+    .service-card {
+      border: 1px solid var(--color-primary-border);
+      border-radius: var(--radius-card);
+      padding: var(--space-lg);
+      transition: transform .3s, box-shadow .3s, background .3s;
+    }
+
+    .service-card:hover {
+      transform: translateY(-4px);
+      background: rgba(255, 255, 255, .35);
+      box-shadow: 0 16px 40px rgba(88, 89, 71, .08);
+    }
+
+    .service-num {
+      font-size: 11px;
+      font-weight: 400;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: rgba(88, 89, 71, .4);
+      margin-bottom: 14px;
+    }
+
+    .service-title {
+      font-weight: 500;
+      font-size: 32px;
+      line-height: 1.1;
+      letter-spacing: -1.28px;
+      color: var(--color-primary);
+    }
+
+    .service-desc {
+      font-size: 16px;
+      font-weight: 400;
+      line-height: 1.5;
+      letter-spacing: -0.64px;
+      color: var(--color-primary);
+      margin-top: var(--space-md);
+    }
+
+    .service-card-wide {
+      grid-column: span 1;
+    }
+
+    .services-actions {
+      display: flex;
+      gap: var(--space-sm);
+      margin-top: 42px;
+    }
+
+    /* ════════════════════════════════════════════════════════════
+       AI SECTION
+    ════════════════════════════════════════════════════════════ */
+    .ai-section {
+      background: var(--color-white);
+      padding: var(--space-section) 0;
+    }
+
+    .ai-header {
+      text-align: center;
+      margin-bottom: 48px;
+    }
+
+    .ai-title {
+      font-weight: 300;
+      font-size: 56px;
+      line-height: 1;
+      letter-spacing: -2.24px;
+      color: var(--color-primary);
+    }
+
+    .ai-subtitle {
+      font-size: 16px;
+      font-weight: 400;
+      line-height: 1.5;
+      letter-spacing: -0.64px;
+      color: var(--color-text-body);
+      max-width: 670px;
+      margin: var(--space-sm) auto 0;
+    }
+
+    .ai-card {
+      background: var(--color-cream-light);
+      border-radius: var(--radius-card);
+      padding: var(--space-3xl);
+      display: flex;
+      flex-direction: column;
+      gap: 48px;
+    }
+
+    .ai-agent-row {
+      display: flex;
+      gap: var(--space-sm);
+      align-items: flex-start;
+    }
+
+    .ai-avatar {
+      width: 66px;
+      height: 66px;
+      border-radius: var(--radius-avatar);
+      overflow: hidden;
+      flex-shrink: 0;
+      background: #d4d2c2;
+    }
+
+    .ai-avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: top;
+    }
+
+    .ai-agent-body {
+      flex: 1;
+    }
+
+    .ai-agent-name {
+      font-weight: 500;
+      font-size: 32px;
+      line-height: 1.1;
+      letter-spacing: -1.28px;
+      color: var(--color-primary);
+    }
+
+    .ai-agent-sub {
+      font-size: 16px;
+      font-weight: 400;
+      line-height: 1.5;
+      letter-spacing: -0.64px;
+      color: var(--color-primary);
+      margin-top: 8px;
+    }
+
+    .ai-features {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-top: var(--space-md);
+    }
+
+    .ai-feature {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .ai-check {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: var(--color-primary);
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .ai-check svg {
+      width: 11px;
+      height: 11px;
+      stroke: #fff;
+      fill: none;
+      stroke-width: 2.5;
+    }
+
+    .ai-feature-text {
+      font-size: 16px;
+      line-height: 1.5;
+      letter-spacing: -0.64px;
+      color: var(--color-primary);
+    }
+
+    .ai-input-box {
+      background: var(--color-white);
+      border: 1px solid var(--color-primary);
+      border-radius: var(--radius-card);
+      padding: var(--space-md);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-md);
+      transition: box-shadow .2s ease;
+    }
+
+    .ai-input-box:focus-within {
+      box-shadow: 0 0 0 3px rgba(88, 89, 71, .12);
+    }
+
+    .ai-textarea {
+      width: 100%;
+      border: none;
+      outline: none;
+      resize: none;
+      font-family: var(--font-ui);
+      font-size: 16px;
+      line-height: 1.5;
+      letter-spacing: -0.64px;
+      color: var(--color-primary);
+      background: transparent;
+      min-height: 100px;
+    }
+
+    .ai-textarea::placeholder {
+      color: var(--color-text-muted);
+    }
+
+    .ai-input-actions {
+      display: flex;
+      justify-content: flex-end;
+    }
+
+    /* ════════════════════════════════════════════════════════════
+       FOOTER
+    ════════════════════════════════════════════════════════════ */
+    .footer {
+      background: var(--color-primary);
+      padding: var(--space-section) 0;
+    }
+
+    .footer-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: var(--space-xl);
+    }
+
+    .footer-brand {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-md);
+    }
+
+    .footer-copyright {
+      font-size: 14px;
+      line-height: 1;
+      letter-spacing: -0.56px;
+      color: rgba(226, 224, 212, .55);
+    }
+
+    .footer-col-title {
+      font-weight: 500;
+      font-size: 20px;
+      line-height: 1;
+      letter-spacing: -0.8px;
+      color: var(--color-cream);
+      margin-bottom: var(--space-md);
+    }
+
+    .footer-contacts {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .footer-contact-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 14px;
+      line-height: 1.5;
+      letter-spacing: -0.56px;
+      color: rgba(226, 224, 212, .78);
+      transition: color .2s;
+    }
+
+    .footer-contact-item:hover {
+      color: var(--color-cream);
+    }
+
+    .footer-contact-item svg {
+      width: 18px;
+      height: 18px;
+      flex-shrink: 0;
+      opacity: .7;
+    }
+
+    .footer-social {
+      display: flex;
+      gap: 12px;
+      margin-top: 4px;
+    }
+
+    .footer-social a {
+      width: 36px;
+      height: 36px;
+      border: 1px solid rgba(226, 224, 212, .25);
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--color-cream);
+      opacity: .7;
+      transition: opacity .2s, border-color .2s, transform .2s;
+    }
+
+    .footer-social a:hover {
+      opacity: 1;
+      border-color: rgba(226, 224, 212, .6);
+      transform: translateY(-2px);
+    }
+
+    .footer-social svg {
+      width: 18px;
+      height: 18px;
+    }
+
+    .footer-map {
+      width: 100%;
+      height: 380px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .footer-map iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+      display: block;
+      filter: saturate(0.7) brightness(0.95);
+    }
+
+    /* ════════════════════════════════════════════════════════════
+       HAMBURGER & MOBILE MENU
+    ════════════════════════════════════════════════════════════ */
+    .nav-hamburger {
+      display: none;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 5px;
+      width: 40px;
+      height: 40px;
+      background: none;
+      border: none;
+      padding: 0;
+      cursor: pointer;
+      z-index: 600;
+    }
+
+    .nav-hamburger span {
+      display: block;
+      width: 22px;
+      height: 1.5px;
+      background: var(--color-primary);
+      border-radius: 2px;
+      transition: transform .35s cubic-bezier(.22, 1, .36, 1), opacity .25s;
+      transform-origin: center;
+    }
+
+    .nav-hamburger.open span:nth-child(1) {
+      transform: translateY(6.5px) rotate(45deg);
+    }
+
+    .nav-hamburger.open span:nth-child(2) {
+      opacity: 0;
+      transform: scaleX(0);
+    }
+
+    .nav-hamburger.open span:nth-child(3) {
+      transform: translateY(-6.5px) rotate(-45deg);
+    }
+
+    .mobile-menu {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 550;
+      pointer-events: none;
+      overflow: hidden;
+      /* clip off-screen drawer — prevents it inflating scrollWidth on iOS */
+    }
+
+    .mobile-menu.open {
+      pointer-events: all;
+    }
+
+    .mobile-menu-backdrop {
+      position: absolute;
+      inset: 0;
+      background: rgba(88, 89, 71, .35);
+      backdrop-filter: blur(6px);
+      opacity: 0;
+      transition: opacity .35s ease;
+    }
+
+    .mobile-menu.open .mobile-menu-backdrop {
+      opacity: 1;
+    }
+
+    .mobile-menu-drawer {
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      width: min(320px, 85vw);
+      background: var(--color-white);
+      display: flex;
+      flex-direction: column;
+      padding: 88px 32px 48px;
+      gap: 0;
+      transform: translateX(100%);
+      transition: transform .4s cubic-bezier(.22, 1, .36, 1);
+      box-shadow: -24px 0 60px rgba(88, 89, 71, .12);
+    }
+
+    .mobile-menu.open .mobile-menu-drawer {
+      transform: translateX(0);
+    }
+
+    .mobile-nav-links {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .mobile-nav-link {
+      font-family: var(--font-ui);
+      font-size: 13px;
+      font-weight: 400;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--color-primary);
+      padding: 14px 0;
+      border-bottom: 1px solid rgba(88, 89, 71, .08);
+      transition: color .2s;
+    }
+
+    .mobile-nav-link:last-child {
+      border-bottom: none;
+    }
+
+    .mobile-nav-link:hover {
+      color: var(--color-primary);
+      opacity: .6;
+    }
+
+    .mobile-nav-ctas {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 32px;
+    }
+
+    .mobile-nav-ctas .btn {
+      width: 100%;
+      justify-content: center;
+    }
+
+    .mobile-menu-footer {
+      margin-top: auto;
+      font-family: var(--font-ui);
+      font-size: 12px;
+      letter-spacing: .5px;
+      color: var(--color-text-muted);
+    }
+
+    /* ════════════════════════════════════════════════════════════
+       RESPONSIVE — 1100px (small desktop)
+    ════════════════════════════════════════════════════════════ */
+    @media (max-width: 1100px) {
+      .container {
+        padding: 0 32px;
+      }
+
+      .hero-inner {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .hero-headline {
+        font-size: 46px;
+        letter-spacing: -1.8px;
+      }
+
+      .section-heading {
+        font-size: 52px;
+        letter-spacing: -2px;
+      }
+
+      .about-intro {
+        font-size: 36px;
+      }
+
+      .about-name {
+        font-size: 54px;
+      }
+
+      .ai-title {
+        font-size: 46px;
+      }
+
+      .watermark-word {
+        font-size: 160px;
+      }
+    }
+
+    /* ════════════════════════════════════════════════════════════
+       RESPONSIVE — 768px (tablet / mobile)
+    ════════════════════════════════════════════════════════════ */
+    @media (max-width: 768px) {
+      :root {
+        --space-section: 56px;
+        --space-2xl: 36px;
+        --space-3xl: 40px;
+      }
+
+      .container {
+        padding: 0 20px;
+      }
+
+      /* Touch: restore cursor */
+      body {
+        cursor: auto;
+      }
+
+      a,
+      button {
+        cursor: auto;
+      }
+
+      .cursor,
+      .cursor-ring {
+        display: none;
+      }
+
+      /* Navbar */
+      .navbar {
+        height: 68px;
+      }
+
+      .hero {
+        padding-top: calc(68px + 0px);
+      }
+
+      .nav-links,
+      .nav-ctas {
+        display: none;
+      }
+
+      .nav-hamburger {
+        display: flex;
+      }
+
+      .mobile-menu {
+        display: flex;
+      }
+
+      /* Hero — stack vertically */
+      .hero-inner {
+        grid-template-columns: 1fr;
+        gap: 0;
+      }
+
+      .hero-card {
+        border-radius: 0 0;
+        padding: var(--space-2xl) var(--space-lg) var(--space-lg);
+      }
+
+      .hero-headline {
+        font-size: 42px;
+        letter-spacing: -1.7px;
+      }
+
+      .hero-body {
+        font-size: 15px;
+        max-width: 100%;
+      }
+
+      .hero-image {
+        min-height: 340px;
+        border-radius: 0 0;
+        overflow: hidden;
+        margin-top: -1px;
+        /* flush against card — no gap */
+      }
+
+      .hero-image-bg {
+        border-radius: 0 !important;
+      }
+
+      .hero-photo {
+        height: 100%;
+        transform: translateX(-50%);
+      }
+
+      .hero-image:hover .hero-photo {
+        transform: translateX(-50%) scale(1.02);
+      }
+
+      /* Stats */
+      .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: var(--space-sm);
+      }
+
+      .stat-value {
+        font-size: 44px;
+        letter-spacing: -1.8px;
+      }
+
+      /* About */
+      .about-inner {
+        grid-template-columns: 1fr;
+        gap: 0;
+      }
+
+      .about-text {
+        order: 1;
+        padding-bottom: 40px;
+      }
+
+      .about-image-wrap {
+        order: 2;
+        height: 400px;
+      }
+
+      .about-photo {
+        height: 100%;
+        left: 50%;
+        transform: translateX(-50%);
+      }
+
+      .about-video {
+        transform: translate(-50%, -68%);
+      }
+
+      .about-intro {
+        font-size: 30px;
+        letter-spacing: -1.2px;
+      }
+
+      .about-name {
+        font-size: 48px;
+        letter-spacing: -1.9px;
+      }
+
+      /* Projects */
+      .section-heading {
+        font-size: 42px;
+        letter-spacing: -1.7px;
+      }
+
+      .projects .section-heading {
+        margin-bottom: 24px;
+      }
+
+      .project-card {
+        width: 78vw;
+        max-width: 340px;
+        height: 300px;
+      }
+
+      /* Services */
+      .services-grid {
+        grid-template-columns: 1fr;
+        gap: var(--space-sm);
+      }
+
+      .service-title {
+        font-size: 24px;
+        letter-spacing: -0.96px;
+      }
+
+      .watermark-word {
+        font-size: 100px;
+        letter-spacing: -4px;
+      }
+
+      .services-actions {
+        flex-direction: column;
+      }
+
+      .services-actions .btn {
+        width: 100%;
+        justify-content: center;
+      }
+
+      /* AI */
+      .ai-title {
+        font-size: 36px;
+        letter-spacing: -1.4px;
+      }
+
+      .ai-card {
+        padding: var(--space-lg);
+        gap: 28px;
+      }
+
+      .ai-agent-row {
+        flex-direction: column;
+      }
+
+      .ai-agent-name {
+        font-size: 26px;
+      }
+
+      /* Footer */
+      .footer-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: var(--space-lg);
+      }
+
+      .footer-map {
+        height: 260px;
+      }
+    }
+
+    /* ════════════════════════════════════════════════════════════
+       RESPONSIVE — 480px (small mobile)
+    ════════════════════════════════════════════════════════════ */
+    @media (max-width: 480px) {
+      .container {
+        padding: 0 16px;
+      }
+
+      .hero-headline {
+        font-size: 34px;
+        letter-spacing: -1.4px;
+      }
+
+      .hero-actions {
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .hero-actions .btn {
+        width: 100%;
+        justify-content: center;
+      }
+
+      .hero-image {
+        min-height: 300px;
+      }
+
+      .stat-value {
+        font-size: 36px;
+        letter-spacing: -1.4px;
+      }
+
+      .stats-grid {
+        gap: 10px;
+      }
+
+      .about-intro {
+        font-size: 24px;
+      }
+
+      .about-name {
+        font-size: 38px;
+        letter-spacing: -1.5px;
+      }
+
+      .about-image-wrap {
+        height: 320px;
+      }
+
+      .about-text {
+        padding-bottom: 28px;
+      }
+
+      .section-heading {
+        font-size: 34px;
+        letter-spacing: -1.4px;
+      }
+
+      .project-card {
+        width: 82vw;
+        height: 260px;
+      }
+
+      .ai-title {
+        font-size: 28px;
+        letter-spacing: -1.1px;
+      }
+
+      .ai-subtitle {
+        font-size: 15px;
+      }
+
+      .ai-card {
+        padding: var(--space-md);
+      }
+
+      .ai-agent-name {
+        font-size: 22px;
+      }
+
+      .footer-grid {
+        grid-template-columns: 1fr;
+        gap: var(--space-lg);
+      }
+
+      .footer-map {
+        height: 220px;
+      }
+    }
+
+    /* Touch devices — override cursor globally */
+    @media (hover: none) {
+      body {
+        cursor: auto;
+      }
+
+      a,
+      button {
+        cursor: auto;
+      }
+
+      .cursor,
+      .cursor-ring {
+        display: none !important;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Scroll progress -->
+  <div id="scroll-progress"></div>
+
+  <!-- Custom cursor -->
+  <div class="cursor" id="cursor"></div>
+  <div class="cursor-ring" id="cursorRing"></div>
+
+  <!-- ═══════════════════════════════════════════════════════════
+       NAVBAR
+  ═══════════════════════════════════════════════════════════ -->
+  <nav class="navbar" id="navbar">
+    <div class="navbar-inner container">
+      <a href="#inicio" aria-label="Jarline Vieira">
+        <!-- Logo Header — fill #585947 -->
+        <svg width="196" height="32" viewBox="0 0 196 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <g clip-path="url(#nh)">
+            <path
+              d="M10.9484 0V12.3487C10.9484 14.1888 10.3103 15.7644 9.10629 16.8994C7.94498 17.997 6.30579 18.6005 4.49308 18.6005C2.76045 18.6005 1.14529 17.9596 0 16.8299L0.525927 16.416C1.60982 17.5323 2.9767 18.1198 4.49308 18.1198C5.86262 18.1198 6.92516 17.746 7.65131 17.0062C8.84466 15.7911 8.80995 13.9618 8.79126 12.979V0H10.9484Z"
+              fill="#585947" />
+            <path
+              d="M29.2998 18.4296H26.8811L25.6424 15.2463L25.2606 14.3356H14.7474L13.0735 18.427H12.5422L19.6249 0.9347L19.9666 0.0534115H22.073L29.2171 18.224L29.2972 18.427L29.2998 18.4296ZM25.0791 13.8549L20.052 0.998794L15.1932 13.1953L14.9449 13.8576H25.0817L25.0791 13.8549Z"
+              fill="#585947" />
+            <path
+              d="M43.2383 13.1312L42.8752 13.2995L46.2604 18.4296H43.5293L41.172 14.7202C40.8196 14.1647 40.1895 13.8282 39.5328 13.8416C39.3539 13.8469 39.1751 13.8496 39.0229 13.8496H34.0519V18.4296H31.8495V0.058754H39.0229C43.2704 0.058754 46.9972 3.23139 46.9972 6.84735V7.061C46.9972 9.67549 45.8386 11.7425 43.7322 12.8802C43.4786 13.0164 43.2357 13.1285 43.233 13.1312H43.2383ZM44.7841 7.07168V6.83667C44.7841 2.98837 42.4161 0.301776 39.0256 0.301776H34.0546V13.6039H39.0256C42.4161 13.6039 44.7841 10.9173 44.7841 7.07168Z"
+              fill="#585947" />
+            <path
+              d="M61.9527 17.9489C61.7925 18.1332 61.6297 18.3175 61.5336 18.4296H50.3343V0.817195L50.3423 0.0240345H51.2606H52.5234V17.9462H61.9527V17.9489Z"
+              fill="#585947" />
+            <path d="M66.4271 0.0373878V18.4296H64.2139V0.825207L64.2192 0.0373878H66.4297H66.4271Z" fill="#585947" />
+            <path
+              d="M86.3377 0.0347176V18.4296H85.0722L71.0965 3.40498L71.0911 18.4296H70.6079V0.0347176H71.3581L85.8625 15.5614V0.0347176H86.3377Z"
+              fill="#585947" />
+            <path
+              d="M92.694 17.8768H102.665L102.249 18.4296H90.5316V0.0427284H102.753L102.276 0.528773H92.6913V7.60846H102.497L102.115 8.08649H92.6967V17.8768H92.694Z"
+              fill="#585947" />
+            <path
+              d="M131.629 0.0347176L124.487 18.3335L124.453 18.4296H122.245L115.085 0.0347176H117.479L124.295 17.4362L130.692 0.961406L131.065 0.0347176H131.626H131.629Z"
+              fill="#585947" />
+            <path d="M136.397 0.0373878V18.4296H134.184V0.825207L134.189 0.0373878H136.399H136.397Z" fill="#585947" />
+            <path
+              d="M142.735 17.8768H152.706L152.29 18.4296H140.572V0.0427284H152.794L152.316 0.528773H142.732V7.60846H152.538L152.156 8.08649H142.737V17.8768H142.735Z"
+              fill="#585947" />
+            <path d="M157.821 0.0373878V18.4296H155.608V0.825207L155.613 0.0373878H157.824H157.821Z" fill="#585947" />
+            <path
+              d="M188.554 16.4881L188.987 16.894C186.862 18.2774 184.374 19.0065 181.768 19.0065C175.873 19.0065 171.212 17.0383 168.983 13.6039L168.879 13.4437L164.215 13.449V18.4403H162.055V0.825206V0.0640933H168.393C172.568 0.0667639 176.231 3.16463 176.231 6.69512V6.82331C176.231 9.68617 173.668 11.9882 171.287 12.9149L170.889 13.0698L171.127 13.4276C172.753 15.8846 177.051 17.8261 180.268 18.2854C183.212 18.7074 186.154 18.0664 188.554 16.4881ZM173.965 6.82598V6.68978C173.965 3.03377 171.674 0.480703 168.393 0.480703H164.215V13.0351H168.393C171.674 13.0351 173.965 10.482 173.965 6.82598ZM195.098 18.4136H192.716L191.2 14.6881L191.085 14.349H180.74L179.87 16.432C179.849 16.4828 179.776 16.5362 179.691 16.5255C179.48 16.5068 179.259 16.4774 179.026 16.4374C178.954 16.4267 178.893 16.3866 178.863 16.3332C178.834 16.2798 178.85 16.2397 178.855 16.2264L185.439 0.0400581H187.47L195.004 18.208L195.098 18.4136ZM190.682 13.4944L185.719 1.74121L181.093 13.4944H190.682Z"
+              fill="#585947" />
+            <path
+              d="M38.9162 30.0211H36.8205L36.4334 31.0893H35.7713L37.5093 26.3063H38.2328L39.9654 31.0893H39.3033L38.9162 30.0211ZM38.7373 29.511L37.867 27.0835L36.9967 29.511H38.7347H38.7373Z"
+              fill="#585947" />
+            <path
+              d="M44.7735 31.0893L43.6282 29.1238H42.87V31.0893H42.2426V26.2796H43.7937C44.1568 26.2796 44.4638 26.3411 44.7147 26.4666C44.9657 26.5894 45.1526 26.7577 45.278 26.9713C45.4035 27.1823 45.4649 27.4253 45.4649 27.695C45.4649 28.0262 45.3688 28.3173 45.1793 28.571C44.9897 28.8247 44.7014 28.9929 44.3196 29.0757L45.5263 31.0893H44.7735ZM42.87 28.6191H43.7937C44.1327 28.6191 44.389 28.5363 44.5599 28.368C44.7307 28.1998 44.8162 27.9755 44.8162 27.695C44.8162 27.4146 44.7334 27.1903 44.5652 27.0327C44.397 26.8752 44.1407 26.7977 43.7964 26.7977H42.8726V28.6191H42.87Z"
+              fill="#585947" />
+            <path
+              d="M51.8081 32L50.8497 31.0413C50.6147 31.1054 50.3771 31.1374 50.1315 31.1374C49.6857 31.1374 49.2772 31.0333 48.9115 30.8223C48.543 30.614 48.2521 30.3202 48.0385 29.9463C47.8249 29.5725 47.7181 29.1505 47.7181 28.6805C47.7181 28.2105 47.8249 27.7885 48.0385 27.4146C48.2521 27.0407 48.543 26.747 48.9115 26.5387C49.2799 26.3304 49.6857 26.2236 50.1315 26.2236C50.5773 26.2236 50.9912 26.3277 51.3596 26.5387C51.728 26.747 52.0163 27.0381 52.2299 27.412C52.4408 27.7858 52.5476 28.2078 52.5476 28.6805C52.5476 29.1532 52.4461 29.5538 52.2432 29.9223C52.0403 30.2908 51.7627 30.5793 51.4076 30.7902L52.6223 31.9973H51.8081V32ZM48.5911 29.69C48.7459 29.9784 48.9569 30.2027 49.2265 30.3603C49.4961 30.5178 49.7978 30.5953 50.1342 30.5953C50.4706 30.5953 50.7722 30.5178 51.0419 30.3603C51.3115 30.2054 51.5224 29.981 51.6773 29.69C51.8321 29.4015 51.9095 29.065 51.9095 28.6831C51.9095 28.3013 51.8321 27.9594 51.6773 27.671C51.5224 27.3826 51.3115 27.1609 51.0472 27.006C50.7802 26.8485 50.4759 26.771 50.1369 26.771C49.7978 26.771 49.4935 26.8485 49.2265 27.006C48.9595 27.1636 48.7486 27.3853 48.5964 27.671C48.4416 27.9594 48.3642 28.2959 48.3642 28.6831C48.3642 29.0704 48.4416 29.4015 48.5964 29.69H48.5911Z"
+              fill="#585947" />
+            <path
+              d="M55.519 26.2823V29.3241C55.519 29.7514 55.6231 30.0692 55.834 30.2775C56.0422 30.4858 56.3332 30.5873 56.707 30.5873C57.0807 30.5873 57.3637 30.4831 57.5719 30.2775C57.7802 30.0718 57.887 29.7541 57.887 29.3241V26.2823H58.5143V29.3187C58.5143 29.7193 58.4343 30.0558 58.2741 30.3309C58.1139 30.606 57.895 30.8089 57.6227 30.9425C57.3504 31.076 57.0434 31.1427 56.7016 31.1427C56.3599 31.1427 56.0556 31.076 55.7806 30.9425C55.5083 30.8089 55.292 30.606 55.1319 30.3309C54.9743 30.0585 54.8943 29.7193 54.8943 29.3187V26.2823H55.5216H55.519Z"
+              fill="#585947" />
+            <path d="M61.7073 26.2823V31.092H61.0799V26.2823H61.7073Z" fill="#585947" />
+            <path d="M67.2522 26.2823V26.7924H65.9414V31.092H65.314V26.7924H63.9952V26.2823H67.2522Z" fill="#585947" />
+            <path
+              d="M70.1701 26.7924V28.4001H71.9214V28.9182H70.1701V30.5739H72.1297V31.092H69.5427V26.2743H72.1297V26.7924H70.1701Z"
+              fill="#585947" />
+            <path d="M77.5571 26.2823V26.7924H76.2463V31.092H75.6189V26.7924H74.3001V26.2823H77.5571Z" fill="#585947" />
+            <path
+              d="M80.4617 26.2823V29.3241C80.4617 29.7514 80.5659 30.0692 80.7768 30.2775C80.985 30.4858 81.276 30.5873 81.6498 30.5873C82.0235 30.5873 82.3065 30.4831 82.5147 30.2775C82.723 30.0718 82.8298 29.7541 82.8298 29.3241V26.2823H83.4571V29.3187C83.4571 29.7193 83.377 30.0558 83.2169 30.3309C83.0567 30.606 82.8378 30.8089 82.5655 30.9425C82.2931 31.076 81.9861 31.1427 81.6444 31.1427C81.3027 31.1427 80.9983 31.076 80.7234 30.9425C80.4511 30.8089 80.2348 30.606 80.0746 30.3309C79.9171 30.0585 79.837 29.7193 79.837 29.3187V26.2823H80.4644H80.4617Z"
+              fill="#585947" />
+            <path
+              d="M88.5536 31.0893L87.4083 29.1238H86.6501V31.0893H86.0227V26.2796H87.5738C87.9369 26.2796 88.2439 26.3411 88.4948 26.4666C88.7458 26.5894 88.9327 26.7577 89.0581 26.9713C89.1836 27.1823 89.245 27.4253 89.245 27.695C89.245 28.0262 89.1489 28.3173 88.9594 28.571C88.7698 28.8247 88.4815 28.9929 88.0997 29.0757L89.3064 31.0893H88.5536ZM86.6501 28.6191H87.5738C87.9128 28.6191 88.1691 28.5363 88.34 28.368C88.5108 28.1998 88.5963 27.9755 88.5963 27.695C88.5963 27.4146 88.5135 27.1903 88.3453 27.0327C88.1771 26.8752 87.9209 26.7977 87.5765 26.7977H86.6527V28.6191H86.6501Z"
+              fill="#585947" />
+            <path
+              d="M94.5737 30.0211H92.478L92.0909 31.0893H91.4288L93.1667 26.3063H93.8902L95.6228 31.0893H94.9608L94.5737 30.0211ZM94.3948 29.511L93.5245 27.0835L92.6542 29.511H94.3921H94.3948Z"
+              fill="#585947" />
+            <path
+              d="M101.886 26.7924V28.4001H103.637V28.9182H101.886V30.5739H103.846V31.092H101.259V26.2743H103.846V26.7924H101.886Z"
+              fill="#585947" />
+            <path d="M110.301 26.2823V31.092H109.674V26.2823H110.301Z" fill="#585947" />
+            <path
+              d="M116.668 31.0893H116.041L113.515 27.2597V31.0893H112.888V26.2716H113.515L116.041 30.0932V26.2716H116.668V31.0893Z"
+              fill="#585947" />
+            <path d="M122.213 26.2823V26.7924H120.902V31.092H120.275V26.7924H118.956V26.2823H122.213Z" fill="#585947" />
+            <path
+              d="M125.131 26.7924V28.4001H126.882V28.9182H125.131V30.5739H127.09V31.092H124.504V26.2743H127.09V26.7924H125.131Z"
+              fill="#585947" />
+            <path
+              d="M132.091 31.0893L130.946 29.1238H130.187V31.0893H129.56V26.2796H131.111C131.474 26.2796 131.781 26.3411 132.032 26.4666C132.283 26.5894 132.47 26.7577 132.595 26.9713C132.721 27.1823 132.782 27.4253 132.782 27.695C132.782 28.0262 132.686 28.3173 132.497 28.571C132.307 28.8247 132.019 28.9929 131.637 29.0757L132.844 31.0893H132.091ZM130.187 28.6191H131.111C131.45 28.6191 131.706 28.5363 131.877 28.368C132.048 28.1998 132.134 27.9755 132.134 27.695C132.134 27.4146 132.051 27.1903 131.883 27.0327C131.714 26.8752 131.458 26.7977 131.114 26.7977H130.19V28.6191H130.187Z"
+              fill="#585947" />
+            <path d="M135.898 26.2823V31.092H135.271V26.2823H135.898Z" fill="#585947" />
+            <path
+              d="M139.443 30.8249C139.075 30.6166 138.784 30.3229 138.57 29.949C138.357 29.5751 138.25 29.1532 138.25 28.6831C138.25 28.2131 138.357 27.7912 138.57 27.4173C138.784 27.0434 139.075 26.7497 139.443 26.5414C139.812 26.333 140.217 26.2262 140.663 26.2262C141.109 26.2262 141.523 26.3304 141.891 26.5414C142.26 26.747 142.548 27.0407 142.762 27.4146C142.972 27.7885 143.079 28.2105 143.079 28.6831C143.079 29.1558 142.972 29.5805 142.762 29.9517C142.551 30.3256 142.26 30.6166 141.891 30.8249C141.523 31.0333 141.114 31.1401 140.663 31.1401C140.212 31.1401 139.809 31.0359 139.443 30.8249ZM141.574 30.3603C141.843 30.2054 142.054 29.981 142.209 29.69C142.364 29.4015 142.441 29.065 142.441 28.6831C142.441 28.3013 142.364 27.9594 142.209 27.671C142.054 27.3826 141.843 27.1609 141.579 27.006C141.312 26.8485 141.008 26.771 140.668 26.771C140.329 26.771 140.025 26.8485 139.758 27.006C139.491 27.1636 139.28 27.3853 139.128 27.671C138.973 27.9594 138.896 28.2959 138.896 28.6831C138.896 29.0704 138.973 29.4015 139.128 29.69C139.283 29.9784 139.494 30.2027 139.763 30.3603C140.033 30.5178 140.335 30.5953 140.671 30.5953C141.008 30.5953 141.309 30.5178 141.579 30.3603H141.574Z"
+              fill="#585947" />
+            <path
+              d="M147.957 31.0893L146.811 29.1238H146.053V31.0893H145.426V26.2796H146.977C147.34 26.2796 147.647 26.3411 147.898 26.4666C148.149 26.5894 148.336 26.7577 148.461 26.9713C148.587 27.1823 148.648 27.4253 148.648 27.695C148.648 28.0262 148.552 28.3173 148.363 28.571C148.173 28.8247 147.885 28.9929 147.503 29.0757L148.71 31.0893H147.957ZM146.053 28.6191H146.977C147.316 28.6191 147.572 28.5363 147.743 28.368C147.914 28.1998 147.999 27.9755 147.999 27.695C147.999 27.4146 147.917 27.1903 147.749 27.0327C147.58 26.8752 147.324 26.7977 146.98 26.7977H146.056V28.6191H146.053Z"
+              fill="#585947" />
+            <path
+              d="M151.764 26.7924V28.4001H153.515V28.9182H151.764V30.5739H153.723V31.092H151.136V26.2743H153.723V26.7924H151.764Z"
+              fill="#585947" />
+            <path
+              d="M156.866 30.9692C156.615 30.857 156.417 30.6994 156.276 30.4991C156.134 30.2988 156.059 30.0665 156.054 29.8048H156.724C156.748 30.0291 156.842 30.2187 157.004 30.3736C157.167 30.5285 157.405 30.606 157.717 30.606C158.03 30.606 158.251 30.5312 158.425 30.3816C158.598 30.2321 158.684 30.0398 158.684 29.8048C158.684 29.6205 158.633 29.471 158.531 29.3561C158.43 29.2413 158.305 29.1532 158.152 29.0944C158 29.0357 157.795 28.9689 157.538 28.9021C157.221 28.8193 156.967 28.7366 156.777 28.6538C156.588 28.571 156.422 28.4401 156.289 28.2639C156.153 28.0876 156.086 27.8499 156.086 27.5508C156.086 27.2891 156.153 27.0568 156.286 26.8538C156.42 26.6508 156.607 26.496 156.85 26.3838C157.09 26.2743 157.367 26.2182 157.68 26.2182C158.131 26.2182 158.499 26.3304 158.788 26.5574C159.076 26.7817 159.236 27.0808 159.274 27.4547H158.585C158.561 27.2704 158.465 27.1075 158.296 26.9686C158.126 26.8298 157.901 26.7577 157.621 26.7577C157.359 26.7577 157.146 26.8244 156.98 26.9606C156.815 27.0968 156.732 27.2864 156.732 27.5295C156.732 27.703 156.783 27.8473 156.882 27.9568C156.98 28.0662 157.103 28.1517 157.247 28.2078C157.391 28.2639 157.597 28.3306 157.859 28.4054C158.176 28.4935 158.43 28.579 158.625 28.6645C158.817 28.7499 158.983 28.8808 159.121 29.057C159.26 29.2333 159.327 29.4736 159.327 29.7781C159.327 30.0131 159.266 30.2348 159.14 30.4404C159.015 30.6487 158.833 30.8143 158.587 30.9451C158.345 31.0733 158.056 31.1374 157.725 31.1374C157.394 31.1374 157.124 31.0813 156.874 30.9692H156.866Z"
+              fill="#585947" />
+          </g>
+          <defs>
+            <clipPath id="nh">
+              <rect width="195.098" height="32" fill="white" />
+            </clipPath>
+          </defs>
+        </svg>
+      </a>
+      <div class="nav-links">
+        <a href="#inicio" class="nav-link">Início</a>
+        <a href="#sobre" class="nav-link">Sobre Mim</a>
+        <a href="#projetos" class="nav-link">Projetos</a>
+      </div>
+      <div class="nav-ctas">
+        <a href="#contato" class="btn btn-secondary">Contato</a>
+        <a href="#orcamento" class="btn btn-primary">Orçamento com IA</a>
+      </div>
+      <button class="nav-hamburger" id="navHamburger" aria-label="Abrir menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Mobile Menu -->
+  <div class="mobile-menu" id="mobileMenu" aria-hidden="true">
+    <div class="mobile-menu-backdrop" id="mobileBackdrop"></div>
+    <div class="mobile-menu-drawer">
+      <nav class="mobile-nav-links">
+        <a href="#inicio" class="mobile-nav-link" data-close>Início</a>
+        <a href="#sobre" class="mobile-nav-link" data-close>Sobre Mim</a>
+        <a href="#projetos" class="mobile-nav-link" data-close>Projetos</a>
+        <a href="#servicos" class="mobile-nav-link" data-close>Serviços</a>
+        <a href="#orcamento" class="mobile-nav-link" data-close>Orçamento</a>
+        <a href="#contato" class="mobile-nav-link" data-close>Contato</a>
+      </nav>
+      <div class="mobile-nav-ctas">
+        <a href="#contato" class="btn btn-secondary" data-close>Contato</a>
+        <a href="#orcamento" class="btn btn-primary" data-close>Orçamento com IA</a>
+      </div>
+      <p class="mobile-menu-footer">Jarline Vieira — Arquitetura e Interiores</p>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════
+       HERO
+  ═══════════════════════════════════════════════════════════ -->
+  <section class="hero" id="inicio">
+    <div class="container-hero">
+      <div class="hero-inner">
+
+        <!-- Left card -->
+        <div class="hero-card parallax-layer reveal" data-parallax="4">
+          <div class="hero-text">
+            <p class="hero-eyebrow reveal d1">Soluções em arquitetura e interiores</p>
+            <h1 class="hero-headline reveal d2">Arquitetura<br>com alma<br>e função</h1>
+            <p class="hero-body reveal d3">Projetos que unem funcionalidade, estética e sensibilidade para criar
+              ambientes que fazem sentido para a sua rotina, para o seu estilo e para o que você deseja viver.</p>
+          </div>
+          <div class="hero-actions reveal d4">
+            <a href="#projetos" class="btn btn-cream">Ver projetos</a>
+            <a href="#sobre" class="btn btn-ghost-light">Saber mais</a>
+          </div>
+        </div>
+
+        <!-- Right image -->
+        <div class="hero-image reveal d2" data-parallax="-2">
+          <div class="hero-image-bg" style="background-image:url('assets/images/hero-bg.png')"></div>
+          <img class="hero-photo" src="assets/images/architect-hero.png" alt="Jarline Vieira">
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════
+       STATS
+  ═══════════════════════════════════════════════════════════ -->
+  <section class="stats">
+    <div class="container">
+      <div class="stats-grid">
+        <div class="stat-card reveal d1">
+          <div class="stat-value" data-count="56" data-prefix="+">0</div>
+          <div class="stat-label">Projetos entregues e executados</div>
+        </div>
+        <div class="stat-card reveal d2">
+          <div class="stat-value" data-count="30" data-prefix="+">0</div>
+          <div class="stat-label">Clientes satisfeitos</div>
+        </div>
+        <div class="stat-card reveal d3">
+          <div class="stat-value" data-count="20" data-prefix="+">0</div>
+          <div class="stat-label">Ambientes transformados</div>
+        </div>
+        <div class="stat-card reveal d4">
+          <div class="stat-value" data-count="100" data-suffix="%">0</div>
+          <div class="stat-label">Projetos pensados de forma personalizada</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════
+       ABOUT
+  ═══════════════════════════════════════════════════════════ -->
+  <section class="about" id="sobre">
+    <div class="container">
+      <div class="about-inner">
+        <div class="about-text">
+          <p class="about-intro reveal-l">Prazer, sou</p>
+          <h2 class="about-name reveal-l d1">Jarline Vieira</h2>
+          <div class="about-bio reveal d2">
+            <p>Sou arquiteta e acredito que a arquitetura vai muito além de desenhar ambientes bonitos. Um espaço bem
+              pensado pode melhorar a rotina, despertar sensações, valorizar histórias e transformar a forma como as
+              pessoas vivem, trabalham e se conectam com o lugar onde estão.</p>
+            <p>Meu trabalho é guiado pela escuta, pelo cuidado e pela busca de soluções que unam estética,
+              funcionalidade e identidade. Cada projeto é desenvolvido de forma personalizada, respeitando o estilo de
+              vida, as necessidades e os objetivos de cada cliente.</p>
+            <p>Mais do que entregar um projeto, meu compromisso é proporcionar uma experiência leve, organizada e
+              acolhedora em cada etapa do processo.</p>
+          </div>
+        </div>
+        <div class="about-image-wrap reveal-r">
+          <video class="about-video" autoplay muted loop playsinline>
+            <source src="assets/images/bg-video.mp4" type="video/mp4">
+          </video>
+          <img class="about-photo" src="assets/images/img-aboutme.png" alt="Jarline Vieira">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════
+       PROJECTS
+  ═══════════════════════════════════════════════════════════ -->
+  <section class="projects" id="projetos">
+    <div class="container">
+      <h2 class="section-heading white reveal">Meus projetos</h2>
+      <div class="carousel-wrap">
+        <div class="carousel" id="carousel">
+          <div class="project-card">
+            <div class="project-card-bg" style="background-image:url('assets/images/project-1.png')"></div>
+            <div class="project-overlay"></div>
+            <div class="project-info">
+              <p class="project-title">Residência Contemporânea</p>
+              <p class="project-desc">Interiores · João Pessoa</p>
+            </div>
+          </div>
+          <div class="project-card">
+            <div class="project-card-bg" style="background-image:url('assets/images/hero-bg.png')"></div>
+            <div class="project-overlay"></div>
+            <div class="project-info">
+              <p class="project-title">Espaço Gourmet</p>
+              <p class="project-desc">Arquitetônico · Recife</p>
+            </div>
+          </div>
+          <div class="project-card">
+            <div class="project-card-bg" style="background-image:url('assets/images/project-2.png')"></div>
+            <div class="project-overlay"></div>
+            <div class="project-info">
+              <p class="project-title">Apartamento Manaíra</p>
+              <p class="project-desc">Interiores · João Pessoa</p>
+            </div>
+          </div>
+          <div class="project-card">
+            <div class="project-card-bg" style="background-image:url('assets/images/project-3.png')"></div>
+            <div class="project-overlay"></div>
+            <div class="project-info">
+              <p class="project-title">Casa de Campo</p>
+              <p class="project-desc">Arquitetônico · Cabedelo</p>
+            </div>
+          </div>
+          <div class="project-card">
+            <div class="project-card-bg" style="background-image:url('assets/images/project-4.png')"></div>
+            <div class="project-overlay"></div>
+            <div class="project-info">
+              <p class="project-title">Studio Corporativo</p>
+              <p class="project-desc">Comercial · João Pessoa</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="carousel-nav reveal">
+        <button class="btn-icon" id="prevBtn" aria-label="Anterior">
+          <svg viewBox="0 0 20 20" fill="none" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="13 15 8 10 13 5" />
+          </svg>
+        </button>
+        <button class="btn-icon" id="nextBtn" aria-label="Próximo">
+          <svg viewBox="0 0 20 20" fill="none" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="7 5 12 10 7 15" />
+          </svg>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════
+       SERVICES
+  ═══════════════════════════════════════════════════════════ -->
+  <section class="services" id="servicos">
+    <!-- Watermark rows -->
+    <div class="watermark-row top" aria-hidden="true">
+      <div class="watermark-track">
+        <span class="watermark-word">meus serviços</span>
+        <span class="watermark-word">meus serviços</span>
+        <span class="watermark-word">meus serviços</span>
+        <span class="watermark-word">meus serviços</span>
+        <span class="watermark-word">meus serviços</span>
+        <span class="watermark-word">meus serviços</span>
+      </div>
+    </div>
+    <div class="watermark-row bottom" aria-hidden="true">
+      <div class="watermark-track">
+        <span class="watermark-word">meus serviços</span>
+        <span class="watermark-word">meus serviços</span>
+        <span class="watermark-word">meus serviços</span>
+        <span class="watermark-word">meus serviços</span>
+        <span class="watermark-word">meus serviços</span>
+        <span class="watermark-word">meus serviços</span>
+      </div>
+    </div>
+
+    <div class="container" style="position:relative;z-index:1;">
+      <h2 class="section-heading olive reveal">O que faço</h2>
+      <div class="services-grid">
+        <div class="service-card reveal d1">
+          <p class="service-num">01</p>
+          <h3 class="service-title">Consultoria de Arquitetura</h3>
+          <p class="service-desc">Para quem precisa de direcionamento profissional, ideias mais claras e soluções
+            práticas para o espaço, sem necessariamente contratar um projeto completo. Ideal para dúvidas pontuais,
+            organização de ambientes, decoração, layout, escolhas de materiais e decisões específicas.</p>
+        </div>
+        <div class="service-card reveal d2">
+          <p class="service-num">02</p>
+          <h3 class="service-title">Projeto de Interiores</h3>
+          <p class="service-desc">Desenvolvimento de ambientes internos com foco em conforto, funcionalidade, estética e
+            identidade. Indicado para quem deseja transformar espaços residenciais ou comerciais de forma estratégica,
+            harmoniosa e personalizada.</p>
+        </div>
+        <div class="service-card reveal d3">
+          <p class="service-num">03</p>
+          <h3 class="service-title">Projeto Arquitetônico</h3>
+          <p class="service-desc">Planejamento completo do espaço, considerando distribuição, aproveitamento,
+            funcionalidade e intenção estética. Ideal para construções, ampliações e projetos que exigem uma visão mais
+            ampla, técnica e bem estruturada.</p>
+        </div>
+        <div class="service-card reveal d1">
+          <p class="service-num">04</p>
+          <h3 class="service-title">Reforma e Readequação de Ambientes</h3>
+          <p class="service-desc">Para quem deseja renovar um ambiente existente, melhorar sua funcionalidade, atualizar
+            a estética ou adaptar o espaço para uma nova fase, sempre buscando equilíbrio entre praticidade e resultado.
+          </p>
+        </div>
+        <div class="service-card reveal d2">
+          <p class="service-num">05</p>
+          <h3 class="service-title">Acompanhamento e Orientação de Projeto</h3>
+          <p class="service-desc">Suporte para auxiliar nas decisões ao longo do processo, trazendo mais segurança,
+            clareza e alinhamento entre o planejado e o resultado desejado.</p>
+        </div>
+      </div>
+      <div class="services-actions reveal">
+        <a href="#orcamento" class="btn btn-primary">Falar comigo agora</a>
+        <a href="#orcamento" class="btn btn-secondary">Orçamento com IA</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════
+       AI SECTION
+  ═══════════════════════════════════════════════════════════ -->
+  <section class="ai-section" id="orcamento">
+    <div class="container">
+      <div class="ai-header">
+        <h2 class="ai-title reveal">Descubra por onde começar</h2>
+        <p class="ai-subtitle reveal d1">Nem sempre é fácil saber qual serviço escolher ou como explicar tudo o que você
+          precisa logo no primeiro contato. Pensando nisso, foi criado um chat com IA para te ajudar a organizar suas
+          ideias de forma simples e natural.</p>
+      </div>
+      <div class="ai-card reveal d2">
+        <div class="ai-agent-row">
+          <div class="ai-avatar">
+            <img src="assets/images/img-ia.png" alt="Jal — Agente de IA">
+          </div>
+          <div class="ai-agent-body">
+            <p class="ai-agent-name">Olá, me chamo a Jal</p>
+            <p class="ai-agent-sub">Sou sua agente de IA, vou te ajudar a entender o que você precisa e te direcionar da
+              melhor forma.</p>
+            <ul class="ai-features">
+              <li class="ai-feature">
+                <span class="ai-check"><svg viewBox="0 0 12 12">
+                    <polyline points="2 6 5 9 10 3" />
+                  </svg></span>
+                <span class="ai-feature-text">Você explica o que precisa do seu jeito</span>
+              </li>
+              <li class="ai-feature">
+                <span class="ai-check"><svg viewBox="0 0 12 12">
+                    <polyline points="2 6 5 9 10 3" />
+                  </svg></span>
+                <span class="ai-feature-text">A IA faz apenas perguntas essenciais</span>
+              </li>
+              <li class="ai-feature">
+                <span class="ai-check"><svg viewBox="0 0 12 12">
+                    <polyline points="2 6 5 9 10 3" />
+                  </svg></span>
+                <span class="ai-feature-text">Recebe uma orientação inicial mais clara</span>
+              </li>
+              <li class="ai-feature">
+                <span class="ai-check"><svg viewBox="0 0 12 12">
+                    <polyline points="2 6 5 9 10 3" />
+                  </svg></span>
+                <span class="ai-feature-text">Sua mensagem vai organizada direto para o WhatsApp</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div class="ai-input-box">
+          <textarea id="ai-message" class="ai-textarea"
+            placeholder="Você pode escrever, com suas próprias palavras, o que deseja para o seu espaço."
+            rows="5"></textarea>
+          <div class="ai-input-actions">
+            <button class="btn btn-primary" id="ai-send-btn" type="button">Enviar mensagem</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════
+       FOOTER
+  ═══════════════════════════════════════════════════════════ -->
+  <footer class="footer" id="contato">
+    <div class="container">
+      <div class="footer-grid">
+
+        <!-- Brand -->
+        <div class="footer-brand reveal">
+          <!-- Logo Footer — fill #E2E0D4 -->
+          <svg width="180" height="30" viewBox="0 0 244 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <g clip-path="url(#nf)">
+              <path
+                d="M13.6855 0V15.4359C13.6855 17.7359 12.8879 19.7055 11.3829 21.1242C9.93122 22.4962 7.88224 23.2507 5.61634 23.2507C3.45056 23.2507 1.43162 22.4495 0 21.0374L0.657409 20.52C2.01227 21.9154 3.72087 22.6498 5.61634 22.6498C7.32828 22.6498 8.65645 22.1824 9.56414 21.2578C11.0558 19.7389 11.0124 17.4522 10.9891 16.2237V0H13.6855Z"
+                fill="#E2E0D4" />
+              <path
+                d="M36.6248 23.0367H33.6014L32.053 19.0575L31.5757 17.9192H18.4342L16.3419 23.0333H15.6778L24.5311 1.16802L24.9583 0.0664062H27.5912L36.5213 22.7796L36.6214 23.0333L36.6248 23.0367ZM31.3488 17.3183L25.0651 1.24813L18.9915 16.4938L18.6812 17.3216H31.3522L31.3488 17.3183Z"
+                fill="#E2E0D4" />
+              <path
+                d="M54.0479 16.4138L53.5941 16.6241L57.8255 23.0368H54.4116L51.465 18.4C51.0245 17.7057 50.2369 17.2851 49.416 17.3018C49.1924 17.3084 48.9688 17.3118 48.7786 17.3118H42.5649V23.0368H39.8118V0.0732422H48.7786C54.0879 0.0732422 58.7465 4.03904 58.7465 8.55899V8.82604C58.7465 12.0942 57.2982 14.6779 54.6653 16.1C54.3482 16.2703 54.0446 16.4105 54.0412 16.4138H54.0479ZM55.9801 8.8394V8.54563C55.9801 3.73527 53.0201 0.37702 48.7819 0.37702H42.5683V17.0047H48.7819C53.0201 17.0047 55.9801 13.6464 55.9801 8.8394Z"
+                fill="#E2E0D4" />
+              <path
+                d="M77.4409 22.4359C77.2407 22.6662 77.0371 22.8966 76.917 23.0368H62.9178V1.02124L62.9278 0.0297852H64.0758H65.6542V22.4326H77.4409V22.4359Z"
+                fill="#E2E0D4" />
+              <path d="M83.0338 0.046875V23.0372H80.2674V1.03165L80.274 0.046875H83.0372H83.0338Z" fill="#E2E0D4" />
+              <path
+                d="M107.922 0.043457V23.0371H106.34L88.8706 4.25629L88.8639 23.0371H88.2599V0.043457H89.1976L107.328 19.4518V0.043457H107.922Z"
+                fill="#E2E0D4" />
+              <path
+                d="M115.867 22.3463H128.332L127.811 23.0373H113.164V0.0537109H128.442L127.844 0.661266H115.864V9.51088H128.121L127.644 10.1084H115.871V22.3463H115.867Z"
+                fill="#E2E0D4" />
+              <path
+                d="M164.536 0.043457L155.609 22.9169L155.566 23.0371H152.806L143.856 0.043457H146.849L155.369 21.7953L163.365 1.20182L163.832 0.043457H164.532H164.536Z"
+                fill="#E2E0D4" />
+              <path d="M170.496 0.046875V23.0372H167.729V1.03165L167.736 0.046875H170.499H170.496Z" fill="#E2E0D4" />
+              <path
+                d="M178.418 22.3463H190.882L190.362 23.0373H175.715V0.0537109H190.993L190.395 0.661266H178.415V9.51088H190.672L190.195 10.1084H178.422V22.3463H178.418Z"
+                fill="#E2E0D4" />
+              <path d="M197.276 0.046875V23.0372H194.51V1.03165L194.517 0.046875H197.28H197.276Z" fill="#E2E0D4" />
+              <path
+                d="M235.693 20.6099L236.234 21.1173C233.577 22.8465 230.467 23.7578 227.21 23.7578C219.842 23.7578 214.015 21.2975 211.229 17.0046L211.099 16.8043L205.269 16.811V23.0501H202.569V1.03124V0.0798486H210.491C215.71 0.0831868 220.289 3.95552 220.289 8.36864V8.52887C220.289 12.1074 217.085 14.985 214.109 16.1433L213.611 16.337L213.908 16.7843C215.941 19.8554 221.313 22.2823 225.335 22.8565C229.015 23.3839 232.693 22.5828 235.693 20.6099ZM217.456 8.53221V8.36196C217.456 3.79194 214.592 0.60061 210.491 0.60061H205.269V16.2936H210.491C214.592 16.2936 217.456 13.1022 217.456 8.53221ZM243.872 23.0167H240.896L239 18.3599L238.857 17.936H225.925L224.837 20.5398C224.811 20.6032 224.721 20.67 224.614 20.6566C224.35 20.6332 224.073 20.5965 223.783 20.5464C223.693 20.5331 223.616 20.483 223.579 20.4163C223.543 20.3495 223.563 20.2994 223.569 20.2827L231.799 0.0498047H234.338L243.755 22.7597L243.872 23.0167ZM238.353 16.8677L232.149 2.17625L226.366 16.8677H238.353Z"
+                fill="#E2E0D4" />
+            </g>
+            <defs>
+              <clipPath id="nf">
+                <rect width="243.872" height="39.9994" fill="white" />
+              </clipPath>
+            </defs>
+          </svg>
+          <p class="footer-copyright">Todos os direitos reservados © 2026</p>
+        </div>
+
+        <!-- Contato -->
+        <div class="reveal d1">
+          <p class="footer-col-title">Contato</p>
+          <div class="footer-contacts">
+            <a href="https://wa.me/5581999999999" class="footer-contact-item">
+              <svg viewBox="0 0 24 24" fill="currentColor">
+                <path
+                  d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
+              </svg>
+              +55 (81) 99999-9999
+            </a>
+            <a href="mailto:email@email.com" class="footer-contact-item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+                stroke-linejoin="round">
+                <rect x="2" y="4" width="20" height="16" rx="2" />
+                <path d="m2 7 10 7 10-7" />
+              </svg>
+              email@email.com
+            </a>
+          </div>
+        </div>
+
+        <!-- Endereço -->
+        <div class="reveal d2">
+          <p class="footer-col-title">Endereço</p>
+          <div class="footer-contacts">
+            <a href="#" class="footer-contact-item" style="align-items:flex-start;">
+              <svg viewBox="0 0 24 24" fill="currentColor" style="margin-top:2px;flex-shrink:0">
+                <path
+                  d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" />
+              </svg>
+              Av. Monteiro da Franca, 815 — Manaíra, João Pessoa - PB
+            </a>
+          </div>
+        </div>
+
+        <!-- Social -->
+        <div class="reveal d3">
+          <p class="footer-col-title">Siga-me</p>
+          <div class="footer-social">
+            <a href="#" aria-label="Instagram">
+              <svg viewBox="0 0 24 24" fill="currentColor">
+                <path
+                  d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z" />
+              </svg>
+            </a>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </footer>
+
+  <!-- Map -->
+  <div class="footer-map">
+    <iframe
+      src="https://www.openstreetmap.org/export/embed.html?bbox=-35.3593%2C-7.5368%2C-35.2793%2C-7.4768&layer=mapnik&marker=-7.5068%2C-35.3193"
+      title="Localização — Timbaúba, PE" loading="lazy" allowfullscreen>
+    </iframe>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════
+       JAVASCRIPT
+  ═══════════════════════════════════════════════════════════ -->
+  <script>
+    (() => {
+      'use strict';
+
+      /* ── Custom Cursor ─────────────────────────────────────── */
+      const cursor = document.getElementById('cursor');
+      const cursorRing = document.getElementById('cursorRing');
+      let mouseX = -100, mouseY = -100;
+      let ringX = -100, ringY = -100;
+
+      document.addEventListener('mousemove', e => {
+        mouseX = e.clientX; mouseY = e.clientY;
+        cursor.style.left = mouseX + 'px';
+        cursor.style.top = mouseY + 'px';
+      });
+
+      // Ring follows with lag
+      (function animateRing() {
+        ringX += (mouseX - ringX) * 0.12;
+        ringY += (mouseY - ringY) * 0.12;
+        cursorRing.style.left = ringX + 'px';
+        cursorRing.style.top = ringY + 'px';
+        requestAnimationFrame(animateRing);
+      })();
+
+      // Hover state on interactive elements
+      const interactives = 'a, button, .btn, .stat-card, .service-card, .project-card, .nav-link';
+      document.querySelectorAll(interactives).forEach(el => {
+        el.addEventListener('mouseenter', () => { cursor.classList.add('hover'); cursorRing.classList.add('hover'); });
+        el.addEventListener('mouseleave', () => { cursor.classList.remove('hover'); cursorRing.classList.remove('hover'); });
+      });
+
+
+      /* ── Scroll Progress ───────────────────────────────────── */
+      const progressEl = document.getElementById('scroll-progress');
+      window.addEventListener('scroll', () => {
+        const pct = window.scrollY / (document.body.scrollHeight - window.innerHeight) * 100;
+        progressEl.style.width = pct + '%';
+      }, { passive: true });
+
+
+      /* ── Navbar on scroll ──────────────────────────────────── */
+      const navbar = document.getElementById('navbar');
+      window.addEventListener('scroll', () => {
+        navbar.classList.toggle('scrolled', window.scrollY > 20);
+      }, { passive: true });
+
+
+      /* ── Intersection Observer — Reveal ────────────────────── */
+      const io = new IntersectionObserver(entries => {
+        entries.forEach(e => {
+          if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
+        });
+      }, { threshold: 0.12 });
+
+      document.querySelectorAll('.reveal, .reveal-l, .reveal-r').forEach(el => {
+        const rect = el.getBoundingClientRect();
+        if (rect.top < window.innerHeight && rect.bottom > 0) {
+          el.classList.add('in');
+        } else {
+          io.observe(el);
+        }
+      });
+
+
+      /* ── Counter Animation ─────────────────────────────────── */
+      const counterIO = new IntersectionObserver(entries => {
+        entries.forEach(e => {
+          if (!e.isIntersecting) return;
+          const el = e.target;
+          const target = +el.dataset.count;
+          const prefix = el.dataset.prefix || '';
+          const suffix = el.dataset.suffix || '';
+          let start = 0;
+          const dur = 1400;
+          const step = ts => {
+            if (!start) start = ts;
+            const progress = Math.min((ts - start) / dur, 1);
+            const eased = 1 - Math.pow(1 - progress, 3);
+            el.textContent = prefix + Math.round(eased * target) + suffix;
+            if (progress < 1) requestAnimationFrame(step);
+          };
+          requestAnimationFrame(step);
+          counterIO.unobserve(el);
+        });
+      }, { threshold: 0.5 });
+
+      document.querySelectorAll('[data-count]').forEach(el => counterIO.observe(el));
+
+
+      /* ── Carousel ──────────────────────────────────────────── */
+      const carousel = document.getElementById('carousel');
+      const cardW = 376;
+
+      document.getElementById('nextBtn').addEventListener('click', () => {
+        carousel.scrollBy({ left: cardW, behavior: 'smooth' });
+      });
+      document.getElementById('prevBtn').addEventListener('click', () => {
+        carousel.scrollBy({ left: -cardW, behavior: 'smooth' });
+      });
+
+      // Drag to scroll
+      let isDown = false, startX, scrollLeft;
+      carousel.addEventListener('mousedown', e => {
+        isDown = true; carousel.classList.add('grabbing');
+        startX = e.pageX - carousel.offsetLeft;
+        scrollLeft = carousel.scrollLeft;
+      });
+      document.addEventListener('mouseup', () => { isDown = false; carousel.classList.remove('grabbing'); });
+      document.addEventListener('mouseleave', () => { isDown = false; carousel.classList.remove('grabbing'); });
+      carousel.addEventListener('mousemove', e => {
+        if (!isDown) return;
+        e.preventDefault();
+        const x = e.pageX - carousel.offsetLeft;
+        const walk = (x - startX) * 1.4;
+        carousel.scrollLeft = scrollLeft - walk;
+      });
+
+
+      /* ── Hero Mouse Parallax ───────────────────────────────── */
+      const heroSection = document.querySelector('.hero');
+      if (heroSection) {
+        document.addEventListener('mousemove', e => {
+          const rect = heroSection.getBoundingClientRect();
+          if (e.clientY < rect.top || e.clientY > rect.bottom) return;
+
+          const cx = (e.clientX / window.innerWidth - 0.5) * 2;
+          const cy = (e.clientY / window.innerHeight - 0.5) * 2;
+
+          document.querySelectorAll('[data-parallax]').forEach(el => {
+            const depth = +el.dataset.parallax;
+            el.style.transform = `translate(${cx * depth}px, ${cy * depth * 0.6}px)`;
+          });
+        });
+      }
+
+
+      /* ── AI Send Button ────────────────────────────────────── */
+      const aiSendBtn = document.getElementById('ai-send-btn');
+      const aiMessage = document.getElementById('ai-message');
+      if (aiSendBtn && aiMessage) {
+        aiSendBtn.addEventListener('click', () => {
+          const msg = aiMessage.value.trim();
+          const text = msg
+            ? `Olá! Vim pelo site e gostaria de compartilhar meu projeto:\n\n${msg}`
+            : 'Olá! Vim pelo site e gostaria de saber mais sobre os serviços.';
+          window.open(`https://wa.me/5581999999999?text=${encodeURIComponent(text)}`, '_blank');
+        });
+      }
+
+
+      /* ── Mobile Menu ───────────────────────────────────────── */
+      const hamburger = document.getElementById('navHamburger');
+      const mobileMenu = document.getElementById('mobileMenu');
+      const backdrop = document.getElementById('mobileBackdrop');
+
+      function openMenu() {
+        hamburger.classList.add('open');
+        hamburger.setAttribute('aria-expanded', 'true');
+        mobileMenu.classList.add('open');
+        mobileMenu.setAttribute('aria-hidden', 'false');
+        document.body.style.overflow = 'hidden';
+      }
+      function closeMenu() {
+        hamburger.classList.remove('open');
+        hamburger.setAttribute('aria-expanded', 'false');
+        mobileMenu.classList.remove('open');
+        mobileMenu.setAttribute('aria-hidden', 'true');
+        document.body.style.overflow = '';
+      }
+
+      hamburger.addEventListener('click', () => {
+        mobileMenu.classList.contains('open') ? closeMenu() : openMenu();
+      });
+      backdrop.addEventListener('click', closeMenu);
+      document.querySelectorAll('[data-close]').forEach(el => {
+        el.addEventListener('click', () => {
+          closeMenu();
+        });
+      });
+      document.addEventListener('keydown', e => {
+        if (e.key === 'Escape') closeMenu();
+      });
+
+
+      /* ── Smooth hash scroll ────────────────────────────────── */
+      document.querySelectorAll('a[href^="#"]').forEach(a => {
+        a.addEventListener('click', e => {
+          const target = document.querySelector(a.getAttribute('href'));
+          if (!target) return;
+          e.preventDefault();
+          target.scrollIntoView({ behavior: 'smooth' });
+        });
+      });
+
+    })();
+  </script>
+
+</body>
+
+</html>
