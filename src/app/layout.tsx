@@ -1,4 +1,7 @@
 import type { Metadata } from 'next';
+export const dynamic = "force-dynamic";
+export const runtime = "nodejs";
+
 import { fetchQuery } from "convex/nextjs";
 import { api } from "../../convex/_generated/api";
 import { Space_Grotesk, Instrument_Sans, Geist } from 'next/font/google';
