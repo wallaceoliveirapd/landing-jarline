@@ -1,38 +1,44 @@
 "use client";
 
-import { useAuth } from "@/hooks/use-auth";
-import { useRouter, usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
-import { Loader2 } from "lucide-react";
+import { useRouter, usePathname } from "next/navigation";
 
 export function AdminAuthGuard({ children }: { children: React.ReactNode }) {
-  const { user, isLoading } = useAuth();
   const router = useRouter();
   const pathname = usePathname();
-  const [mounted, setMounted] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
 
   useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  useEffect(() => {
-    if (mounted && !isLoading && !user && pathname !== "/admin/login") {
+    // Check session storage for session ID
+    const sessionId = sessionStorage.getItem("sessionId");
+    
+    if (!sessionId && pathname !== "/admin/login") {
+      setIsAuthenticated(false);
       router.push("/admin/login");
+    } else if (sessionId) {
+      // Verify session with backend
+      fetch(`/api/auth/verify?sessionId=${sessionId}`)
+        .then(res => res.json())
+        .then(data => {
+          if (!data.valid) {
+            sessionStorage.removeItem("sessionId");
+            setIsAuthenticated(false);
+            router.push("/admin/login");
+          } else {
+            setIsAuthenticated(true);
+          }
+        })
+        .catch(() => {
+          // On error, allow access if session exists
+          setIsAuthenticated(true);
+        });
+    } else {
+      setIsAuthenticated(true);
     }
-  }, [user, isLoading, router, pathname, mounted]);
+  }, [pathname, router]);
 
-  if (!mounted || isLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-zinc-50">
-        <div className="flex flex-col items-center gap-4">
-          <Loader2 className="size-8 animate-spin text-primary" />
-          <p className="text-sm text-zinc-500">Verificando autenticação...</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (!user) {
+  // Don't show loading - redirect immediately or show content
+  if (isAuthenticated === null) {
     return null;
   }
 
