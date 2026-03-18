@@ -794,4 +794,109 @@ position: absolute;
 
 ---
 
+## 9. Admin Dashboard (CMS)
+
+> O painel administrativo segue uma estética **Premium Minimalist**. Diferente da landing page, que possui tons terrosos profundos, o admin utiliza um fundo branco puro para foco máximo na gestão, mantendo a sofisticação através da tipografia e do uso da cor primária apenas como acento.
+
+### 9.1 Padrão de Navegação e Edição
+
+### Admin Dashboard Standards
+
+The administrative interface follows a more utilitarian yet premium aesthetic.
+
+#### 1. Typography Hierarchy
+- **Primary Titles (>= 40px)**: Use `font-display  ` with `font-medium`. Never use bold.
+- **UI Elements (Labels, Tabs, Smaller Headings < 40px)**: Use `font-ui`.
+- **Weights**: Never use `font-bold` for UI elements. Use `font-medium` for emphasis/active states.
+- **Labels**: Small caps style (e.g., `text-[10px] font-medium uppercase tracking-[0.2em] font-ui text-zinc-400`).
+- **Input Text**: Always use `font-ui` for readability.
+
+#### 2. Specialized Components
+
+##### Custom Tabs (Premium Admin)
+The `TabsList` and `TabsTrigger` components follow these rules:
+- `TabsList`: `bg-zinc-100/40`, `rounded-2xl`, `p-1.5`, `h-16` or `h-20`.
+- `TabsTrigger`: `rounded-xl`, `px-12`, `font-medium` (not bold), `tracking-[0.15em]`, `font-ui`.
+- **Active State**: Background `bg-primary`, text `text-white`, shadow `shadow-xl shadow-primary/20`.
+- **Inactive State**: `text-zinc-500` or `text-zinc-900` depending on context.
+
+##### Premium Inputs & Textareas
+- **Base Background**: `bg-zinc-50`.
+- **Border**: `border-zinc-100`.
+- **Focus State**: `focus:bg-white` with `transition-all`.
+- **Corners**: `rounded-2xl`.
+- **Shadow**: Removed default focus rings for a cleaner, inset look.
+
+##### Sticky Persistence Bar
+- Located at the bottom of editor pages (`sticky bottom-10`).
+- Features a `backdrop-blur-3xl` for high-end transparency.
+- **Status Indicator**: Uses the primary color with a glowing shadow for the 'published' state: `shadow-[0_0_15px_rgba(88,89,71,0.2)]`.
+
+##### Image Upload
+- Consistently uses the `ImageUpload` and `MultiImageUpload` components.
+- Integrated with Convex Storage for direct uploads instead of URL links.
+- Uses `font-ui` for all labels and descriptions.
+
+*   **Edição em Página Inteira**: Em vez de modais ou sheets laterais, a criação e edição de entidades (projetos, páginas, formulários) ocorrem em rotas dedicadas (`/admin/entity/[id]`). Isso permite foco total e espaço para interfaces complexas.
+*   **Header de Contexto**: Cada editor possui um header fixo no topo com:
+    *   Breadcrumb minimalista (botão voltar com ícone `ChevronLeft`).
+    *   Título da entidade em `font-display  ` tamanho `5xl`.
+*   **Tabs de Navegação (Premium)**:
+    *   **Estrutura**: `h-20`, `bg-zinc-100/40`, `rounded-2xl`, `p-1.5`.
+    *   **Trigger**: `rounded-xl`, `px-12`, `font-bold`, `tracking-[0.15em]`.
+    *   **Estado Ativo**: `bg-primary`, `text-white`, `shadow-xl shadow-primary/20`.
+*   **Barra de Persistência (Sticky Footer)**:
+    *   **Posição**: Centralizada no rodapé (`bottom-10`), largura máxima que acompanha o conteúdo do formulário.
+    *   **Estética**: `bg-white/80`, `backdrop-blur-3xl`, `border-zinc-100/50`, `shadow-2xl`.
+    *   **Status Indicator**: Dot animado com `shadow-primary/20` (ativo) ou `bg-red-400` (pausado/rascunho).
+    *   **Botão Primário**: Variante `premium` (Primary color, 8px radius, hover scale).
+
+### 9.2 Tipografia Admin
+
+*   **Display  **: Títulos de página usam a fonte `font-display` (Space Grotesk ou Castle Rocks) com ` ` e `tracking-tighter`.
+*   **Labels Mono/Upppercase**: Rótulos de campo usam `text-[10px] font-bold uppercase tracking-[0.2em] text-zinc-400`.
+*   **Inputs Premium**: Campos de texto com `rounded-3xl`, `bg-zinc-50` e transição para `bg-white` no foco.
+
+### 9.3 Componentes de Gestão
+
+*   **Image Upload (Single & Multi)**:
+    *   **ImageUpload**: Componente para upload único via Convex Storage. Preview com `aspect-video` ou `aspect-square`, `rounded-2xl`.
+    *   **MultiImageUpload (Gallery)**: Gestão de múltiplos uploads para galerias. Thumbnails em grid com ações de remover no hover.
+    *   **Estética**: Bordas tracejadas `zinc-200`, `hover:border-primary`, ícones minimalistas.
+*   **Block Editor**: Interface para montagem de conteúdo modular (Heading, Text, Image) com integração de `ImageUpload` nos blocos de imagem.
+*   **Slug Automático**: Geração reativa de slug a partir do título, com opção de edição manual. Botão "Reset" com ícone `RefreshCw`.
+
+### 9.4 Visão Geral Visual (Admin)
+
+A estética **Premium Minimalist** do admin prioriza funcionalidade sem sacrificar o refinamento da marca.
+
+| Atributo | Valor | Motivo |
+|----------|-------|--------|
+| **Background** | `#ffffff` (White) | Base limpa e editorial |
+| **Texto Principal** | `text-zinc-900` | Legibilidade máxima |
+| **Acento Sidebar** | `#18181B` (Zinc-900) | Destaque de estado ativo |
+| **Cor de Marca** | `#585947` (Primary) | Usado em indicadores, estados ativos de tabs e botões premium |
+| **Bordas** | `rgba(0,0,0,0.05)` | Separação física via sombras sutis |
+
+### 9.5 Layout de Sistema
+
+#### 9.5.1 Estrutura Global
+- **Sidebar Provider:** Gerencia o estado do menu recolhível.
+- **Sidebar Inset:** Container principal com `bg-white` e `backdrop-blur` no header.
+- **Max Width:** Conteúdo centralizado em `max-w-[1400px]` (Dashboard) ou `max-w-[1000px]` (Editores) para foco.
+- **Padding:** Padrão de `px-8 sm:px-12` para o corpo das páginas.
+
+#### 9.5.2 Header
+- **Altura:** `h-16` (64px).
+- **Background:** `bg-white/80` com `backdrop-blur-md`.
+- **Interação:** Borda inferior dinâmica `border-zinc-100` que aparece apenas no scroll.
+
+### 9.6 Cursor Customizado
+O admin compartilha o componente `<CustomCursor />` da landing page para manter a identidade imersiva.
+- **Implementação**: Velocidade de acompanhamento ajustada para precisão (`0.15` a `0.2`).
+- **CSS**: `cursor: none !important` em elementos interativos para forçar o dot customizado.
+
+---
+
 *Gerado a partir do design Figma: `NSWamtp8CrROsboxqdG3RM` — node `299:148`*
+*Última atualização: Março 2026 — Refinamento CMS, Image Storage & Extended Persistence Bar*

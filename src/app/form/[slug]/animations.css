@@ -1,0 +1,86 @@
+/* ─── Fade-in Animations ─────────────────────────────────────────── */
+
+.fade-in-section {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1), transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.fade-in-section.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ─── Page-specific animations ─────────────────────────────────── */
+
+/* Hero title animation */
+.hero-title {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.8s cubic-bezier(0.22, 1, 0.36, 1), transform 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.hero-title.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Staggered list items */
+.stagger-item {
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity 0.6s cubic-bezier(0.22, 1, 0.36, 1), transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.stagger-item.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ─── Form animations ───────────────────────────────────────────── */
+
+.form-card {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.8s cubic-bezier(0.22, 1, 0.36, 1), transform 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.form-card.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.form-field {
+  opacity: 0;
+  transform: translateY(12px);
+  transition: opacity 0.5s cubic-bezier(0.22, 1, 0.36, 1), transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.form-field.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.form-submit {
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity 0.6s cubic-bezier(0.22, 1, 0.36, 1) 0.3s, transform 0.6s cubic-bezier(0.22, 1, 0.36, 1) 0.3s;
+}
+
+.form-submit.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ─── Content reveal on scroll ──────────────────────────────────── */
+
+.content-reveal {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.8s cubic-bezier(0.22, 1, 0.36, 1), transform 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.content-reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}

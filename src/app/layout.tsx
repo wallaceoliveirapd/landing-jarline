@@ -1,8 +1,12 @@
 import type { Metadata } from 'next';
+import { fetchQuery } from "convex/nextjs";
+import { api } from "../../convex/_generated/api";
 import { Space_Grotesk, Instrument_Sans, Geist } from 'next/font/google';
 import localFont from 'next/font/local';
 import './globals.css';
 import { cn } from "@/lib/utils";
+import ConvexClientProvider from "@/components/ConvexClientProvider";
+import { Toaster } from "@/components/ui/sonner";
 
 const geist = Geist({subsets:['latin'],variable:'--font-sans'});
 
@@ -24,10 +28,32 @@ const castleRocks = localFont({
   weight: '700',
 });
 
-export const metadata: Metadata = {
-  title: 'Jarline Vieira — Arquitetura e Interiores',
-  description: 'Projetos e soluções em arquitetura e interiores.',
-};
+export async function generateMetadata(): Promise<Metadata> {
+  let seoTitle = 'Jarline Vieira — Arquitetura e Interiores';
+  let seoDescription = 'Projetos e soluções em arquitetura e interiores.';
+  let ogImage = undefined;
+
+  try {
+    const seoSettings: any = await fetchQuery(api.settings.getSetting, { key: "seo" });
+    if (seoSettings?.value) {
+      if (seoSettings.value.title) seoTitle = seoSettings.value.title;
+      if (seoSettings.value.description) seoDescription = seoSettings.value.description;
+      if (seoSettings.value.ogImage) ogImage = seoSettings.value.ogImage;
+    }
+  } catch (error) {
+    console.error("Failed to fetch seo settings", error);
+  }
+
+  return {
+    title: seoTitle,
+    description: seoDescription,
+    openGraph: {
+      title: seoTitle,
+      description: seoDescription,
+      images: ogImage ? [ogImage] : [],
+    }
+  };
+}
 
 export default function RootLayout({
   children,
@@ -36,8 +62,11 @@ export default function RootLayout({
 }) {
   return (
     <html lang="pt-BR" className={cn(spaceGrotesk.variable, instrumentSans.variable, castleRocks.variable, "font-sans", geist.variable)}>
-      <body className="antialiased">
-        {children}
+      <body className="antialiased font-sans">
+        <ConvexClientProvider>
+          {children}
+        </ConvexClientProvider>
+        <Toaster position="top-right" richColors />
       </body>
     </html>
   );
