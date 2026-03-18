@@ -339,8 +339,8 @@ export default function SubmissionsPage() {
               </TableRow>
             )}
             {filteredSubmissions?.map((sub) => {
-              const displayName = getDisplayName(sub.data);
-              const displayEmail = getDisplayEmail(sub.data);
+              const displayName = getDisplayName(sub.data, sub.formFields);
+              const displayEmail = getDisplayEmail(sub.data, sub.formFields);
               return (
                 <TableRow key={sub._id} className="border-zinc-50 hover:bg-zinc-50/50 transition-all duration-500 group">
                   <TableCell className="px-10 py-8">
