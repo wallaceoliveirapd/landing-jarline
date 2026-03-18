@@ -1,12 +1,50 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { SidebarProvider, SidebarTrigger, SidebarInset } from "@/components/ui/sidebar";
 import { AdminSidebar } from "@/components/admin/admin-sidebar";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { CustomCursor } from "@/components/ui/custom-cursor";
-import { AdminAuthGuard } from "@/components/admin/admin-auth-guard";
 import { AuthProvider } from "@/hooks/use-auth";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
+import { Loader2 } from "lucide-react";
+
+function AuthCheck({ children }: { children: React.ReactNode }) {
+  const pathname = usePathname();
+  const router = useRouter();
+  const [isChecking, setIsChecking] = useState(true);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  useEffect(() => {
+    const checkAuth = () => {
+      const sessionId = sessionStorage.getItem("sessionId");
+      
+      if (!sessionId && pathname !== "/admin/login") {
+        router.push("/admin/login");
+        setIsAuthenticated(false);
+      } else {
+        setIsAuthenticated(true);
+      }
+      setIsChecking(false);
+    };
+
+    checkAuth();
+  }, [pathname, router]);
+
+  if (isChecking) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-zinc-50">
+        <Loader2 className="size-8 animate-spin text-primary" />
+      </div>
+    );
+  }
+
+  if (!isAuthenticated && pathname !== "/admin/login") {
+    return null;
+  }
+
+  return <>{children}</>;
+}
 
 export default function AdminLayout({
   children,
@@ -21,7 +59,7 @@ export default function AdminLayout({
       {isLoginPage ? (
         children
       ) : (
-        <AdminAuthGuard>
+        <AuthCheck>
           <TooltipProvider>
             <SidebarProvider className="font-sans antialiased text-zinc-900">
               <CustomCursor />
@@ -42,7 +80,7 @@ export default function AdminLayout({
               </SidebarInset>
             </SidebarProvider>
           </TooltipProvider>
-        </AdminAuthGuard>
+        </AuthCheck>
       )}
     </AuthProvider>
   );
