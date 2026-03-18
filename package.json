@@ -3,11 +3,12 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "concurrently \"npx convex dev\" \"next dev\"",
+    "dev": "concurrently \"npx convex dev\" \"next dev --turbopack\"",
     "dev:next": "next dev",
     "dev:convex": "npx convex dev",
     "build": "next build",
-    "start": "concurrently \"npx convex run\" \"next start\"",
+    "start": "next start",
+    "deploy": "npx convex deploy",
     "lint": "eslint"
   },
   "dependencies": {
