@@ -177,7 +177,7 @@ function CoverImage({ storageId }: { storageId: string }) {
   const url = useQuery(api.files.getImageUrl, { storageId });
   if (!url) return null;
   return (
-    <div className="w-full aspect-[5/1] overflow-hidden bg-[#e2e0d4]">
+    <div className="w-full aspect-[2/1] md:aspect-[5/1] overflow-hidden bg-[#e2e0d4]">
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
         src={url}
@@ -197,7 +197,7 @@ function NotFoundScreen() {
         <div className="w-20 h-20 rounded-[16px] bg-white border border-[rgba(88,89,71,0.15)] flex items-center justify-center mx-auto mb-8">
           <FileX className="size-9 text-[#8a8a80]" />
         </div>
-        <h1 className="text-[42px] font-light tracking-[-1.68px] leading-none text-[#585947] font-ui mb-4">
+        <h1 className="text-[28px] sm:text-[42px] font-light tracking-[-1px] sm:tracking-[-1.68px] leading-none text-[#585947] font-ui mb-4">
           Página não encontrada
         </h1>
         <p className="text-[#626262] text-base leading-relaxed mb-8">
@@ -264,8 +264,8 @@ export default function PublicPageView({ params }: { params: Promise<{ slug: str
       )}
 
       {/* ── Hero header ──────────────────────────────────── */}
-      <div className={`${page.coverImage ? "" : "pt-16"}`}>
-        <div className="max-w-[1128px] mx-auto px-6 py-16 border-b border-[rgba(88,89,71,0.1)]">
+      <div className={`${page.coverImage ? "" : "pt-10 sm:pt-16"}`}>
+        <div className="max-w-[1128px] mx-auto px-6 py-10 sm:py-16 border-b border-[rgba(88,89,71,0.1)]">
           <div className="max-w-[720px]">
             <FadeIn delay={200}>
               <p className="text-[11px] font-light uppercase tracking-[1.68px] text-[#8a8a80] font-ui mb-4">
@@ -277,13 +277,13 @@ export default function PublicPageView({ params }: { params: Promise<{ slug: str
               </p>
             </FadeIn>
             <FadeIn delay={300}>
-              <h1 className="text-[64px] font-light tracking-[-2.56px] leading-none text-[#585947] font-ui mb-6">
+              <h1 className="text-[36px] sm:text-[64px] font-light tracking-[-1.2px] sm:tracking-[-2.56px] leading-[1.1] sm:leading-none text-[#585947] font-ui mb-4 sm:mb-6">
                 {page.title}
               </h1>
             </FadeIn>
             {page.description && (
               <FadeIn delay={400}>
-                <p className="text-[#626262] text-base leading-relaxed tracking-[-0.64px] max-w-[600px]">
+                <p className="text-[#626262] text-sm sm:text-base leading-relaxed tracking-[-0.3px] sm:tracking-[-0.64px] max-w-[600px]">
                   {page.description}
                 </p>
               </FadeIn>
@@ -295,7 +295,7 @@ export default function PublicPageView({ params }: { params: Promise<{ slug: str
       {/* ── Content ──────────────────────────────────────── */}
       {html ? (
         <FadeIn delay={500}>
-          <div className="max-w-[1128px] mx-auto px-6 py-16">
+          <div className="max-w-[1128px] mx-auto px-6 py-0 md:py-16">
             <div
               className="max-w-[1128px] page-content"
               dangerouslySetInnerHTML={{ __html: html }}
@@ -312,8 +312,8 @@ export default function PublicPageView({ params }: { params: Promise<{ slug: str
 
       {/* ── Footer strip ─────────────────────────────────── */}
       <FadeIn delay={600}>
-        <footer className="bg-[#585947] py-10 mt-16">
-          <div className="max-w-[1128px] mx-auto px-6 flex items-center justify-between">
+        <footer className="bg-[#585947] py-8 sm:py-10 mt-12 sm:mt-16">
+          <div className="max-w-[1128px] mx-auto px-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-0">
             <span className="text-[#e2e0d4] text-sm font-ui">
               Jarline Vieira Arquitetura &amp; Interiores
             </span>

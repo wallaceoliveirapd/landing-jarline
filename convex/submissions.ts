@@ -13,26 +13,39 @@ export const getSubmissions = query({
 
 export const getSubmissionsWithForms = query({
   handler: async (ctx) => {
-    const [submissions, forms] = await Promise.all([
-      ctx.db.query("submissions").withIndex("by_created").order("desc").collect(),
-      ctx.db.query("forms").collect(),
-    ]);
+    const submissions = await ctx.db
+      .query("submissions")
+      .withIndex("by_created")
+      .order("desc")
+      .collect();
 
-    const formsMap = new Map(
-      forms.map((f) => [
-        f._id.toString(),
-        { title: f.title, fields: f.fields.map((field) => ({ id: field.id, label: field.label })) },
-      ])
-    );
-
-    return submissions.map((sub) => {
-      const form = formsMap.get(sub.formId.toString());
-      return {
-        ...sub,
-        formTitle: form?.title ?? "Formulário removido",
-        formFields: form?.fields ?? [],
-      };
-    });
+    const result = [];
+    for (const sub of submissions) {
+      let formTitle = "Formulário removido";
+      let formFields: { id: string; label: string }[] = [];
+      try {
+        const form = await ctx.db.get(sub.formId);
+        if (form) {
+          formTitle = form.title;
+          formFields = (form.fields ?? []).map((f: any) => ({
+            id: String(f.id ?? ""),
+            label: String(f.label ?? ""),
+          }));
+        }
+      } catch (_e) {
+        // form may have been deleted
+      }
+      result.push({
+        _id: sub._id,
+        formId: sub.formId,
+        status: sub.status,
+        createdAt: sub.createdAt,
+        formTitle,
+        formFields,
+        data: sub.data,
+      });
+    }
+    return result;
   },
 });
 

@@ -47,21 +47,49 @@ type SubmissionWithForm = {
   createdAt: number;
 };
 
-function getDisplayName(data: Record<string, unknown>): string {
+function getDisplayName(data: Record<string, unknown>, formFields: { id: string; label: string }[]): string {
+  // 1. Prioridade: campo cujo label contém "nome" (ex: "Nome completo", "Seu nome")
+  const nameField = formFields?.find((f) =>
+    f.label.toLowerCase().includes("nome") || f.label.toLowerCase().includes("name")
+  );
+  if (nameField && typeof data[nameField.id] === "string" && data[nameField.id]) {
+    return data[nameField.id] as string;
+  }
+  // 2. Chave exata
   for (const key of ["name", "nome", "Name", "Nome"]) {
     if (typeof data[key] === "string" && data[key]) return data[key] as string;
   }
+  // 3. Primeiro valor string disponível
   const firstStr = Object.values(data).find((v) => typeof v === "string" && v);
   return typeof firstStr === "string" ? firstStr : "Sem dados";
 }
 
-function getDisplayEmail(data: Record<string, unknown>): string {
+function getDisplayEmail(data: Record<string, unknown>, formFields: { id: string; label: string }[]): string {
+  // 1. Campo cujo label contém "email" ou "e-mail"
+  const emailField = formFields?.find((f) =>
+    f.label.toLowerCase().includes("email") || f.label.toLowerCase().includes("e-mail")
+  );
+  if (emailField && typeof data[emailField.id] === "string" && data[emailField.id]) {
+    return data[emailField.id] as string;
+  }
+  // 2. Chave exata
   for (const key of ["email", "Email", "e-mail", "E-mail"]) {
     if (typeof data[key] === "string" && data[key]) return data[key] as string;
   }
-  const values = Object.values(data);
-  if (values.length > 1 && typeof values[1] === "string") return values[1] as string;
   return "";
+}
+
+function getAllDataValues(data: Record<string, unknown>): string {
+  return Object.values(data ?? {})
+    .map((v) => {
+      if (Array.isArray(v)) return v.join(" ");
+      if (typeof v === "string") return v;
+      if (typeof v === "number" || typeof v === "boolean") return String(v);
+      return "";
+    })
+    .filter(Boolean)
+    .join(" ")
+    .toLowerCase();
 }
 
 function getFieldLabel(key: string, formFields: { id: string; label: string }[]): string {
@@ -117,12 +145,12 @@ export default function SubmissionsPage() {
   };
 
   const handleReplyEmail = (sub: SubmissionWithForm) => {
-    const email = getDisplayEmail(sub.data);
+    const email = getDisplayEmail(sub.data, sub.formFields);
     if (!email) {
       toast.error("Nenhum e-mail encontrado nesta submissão.");
       return;
     }
-    const name = getDisplayName(sub.data);
+    const name = getDisplayName(sub.data, sub.formFields);
     window.open(`mailto:${email}?subject=Re: ${encodeURIComponent(sub.formTitle)}&body=Olá ${encodeURIComponent(name)},`, "_blank");
   };
 
@@ -158,9 +186,7 @@ export default function SubmissionsPage() {
   const filteredSubmissions = submissions?.filter((sub) => {
     const matchesSearch =
       searchTerm === "" ||
-      Object.values(sub.data || {}).some(
-        (v) => typeof v === "string" && v.toLowerCase().includes(searchTerm.toLowerCase())
-      ) ||
+      getAllDataValues(sub.data).includes(searchTerm.toLowerCase()) ||
       sub.formTitle?.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesStatus = statusFilter === "all" || sub.status === statusFilter;
     const matchesForm = formFilter === "all" || sub.formId === formFilter;
@@ -248,8 +274,8 @@ export default function SubmissionsPage() {
           </div>
         )}
         {filteredSubmissions?.map((sub) => {
-          const displayName = getDisplayName(sub.data);
-          const displayEmail = getDisplayEmail(sub.data);
+          const displayName = getDisplayName(sub.data, sub.formFields);
+          const displayEmail = getDisplayEmail(sub.data, sub.formFields);
           return (
             <div key={sub._id} className="bg-white border border-zinc-100 rounded-2xl p-4 shadow-sm">
               <div className="flex items-start justify-between gap-3">
