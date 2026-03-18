@@ -1,16 +1,30 @@
+"use client";
+
 export const dynamic = 'force-dynamic';
 
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { FolderKanban, Sparkles, Files, Layers, ArrowRight } from "lucide-react";
 import Link from "next/link";
+import { useQuery } from "convex/react";
+import { api } from "../../../convex/_generated/api";
 
 export default function AdminDashboardPage() {
+  const projects = useQuery(api.projects.getProjects);
+  const pages = useQuery(api.pages.getPages);
+  const aiLeads = useQuery(api.settings.getSetting, { key: "ai_leads" });
+  const submissions = useQuery(api.submissions.getSubmissions);
+
+  const activeProjects = projects?.filter(p => p.status === "active").length || 0;
+  const activePages = pages?.filter(p => p.status === "published").length || 0;
+  const leadsCount = aiLeads?.value?.length || 0;
+  const submissionsCount = submissions?.length || 0;
+
   const stats = [
-    { label: "Projetos Ativos", value: "12", sub: "+2 este mês", icon: FolderKanban, href: "/admin/projects" },
-    { label: "Leads da IA", value: "34", sub: "+14 esta semana", icon: Sparkles, href: "/admin/ai" },
-    { label: "Páginas", value: "5", sub: "Status: Online", icon: Files, href: "/admin/home" },
-    { label: "Seções da Home", value: "7", sub: "100% otimizadas", icon: Layers, href: "/admin/home" },
+    { label: "Projetos Ativos", value: activeProjects.toString(), sub: "+2 este mês", icon: FolderKanban, href: "/admin/projects" },
+    { label: "Leads da IA", value: leadsCount.toString(), sub: "+14 esta semana", icon: Sparkles, href: "/admin/ai" },
+    { label: "Páginas", value: activePages.toString(), sub: "Status: Online", icon: Files, href: "/admin/home" },
+    { label: "Submissões", value: submissionsCount.toString(), sub: "Formulários", icon: Layers, href: "/admin/submissions" },
   ];
 
   return (
