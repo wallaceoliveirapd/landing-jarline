@@ -46,28 +46,75 @@ export default function PagesManagementPage() {
   };
 
   return (
-    <div className="max-w-[1200px] mx-auto space-y-12 py-8 pb-32">
-      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-8 border-b border-zinc-100 pb-12">
-        <div className="space-y-4">
+    <div className="max-w-[1200px] mx-auto space-y-6 sm:space-y-12 py-4 sm:py-8 pb-20 sm:pb-32">
+      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 sm:gap-8 border-b border-zinc-100 pb-6 sm:pb-12">
+        <div className="space-y-3 sm:space-y-4">
           <div className="flex items-center gap-2">
             <div className="h-px w-8 bg-primary" />
             <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-zinc-400 font-ui">Módulo de Conteúdo Digital</span>
           </div>
-          <h2 className="text-4xl font-medium tracking-tight text-zinc-900 font-ui  ">Páginas Institucionais</h2>
-          <p className="text-zinc-500 text-sm max-w-md  ">Gerencie as páginas individuais e a estrutura modular conforme Seção 8 do PRD.</p>
+          <h2 className="text-2xl sm:text-4xl font-medium tracking-tight text-zinc-900 font-ui">Páginas Institucionais</h2>
+          <p className="text-zinc-500 text-sm max-w-md hidden sm:block">Gerencie as páginas individuais e a estrutura modular conforme Seção 8 do PRD.</p>
         </div>
 
         <Button
           onClick={() => router.push("/admin/pages/new")}
           variant="premium"
-          size="xl"
+          size="lg"
+          className="w-full sm:w-auto"
         >
-          <Plus className="size-5 mr-3" />
+          <Plus className="size-4 mr-2" />
           Nova Página
         </Button>
       </div>
 
-      <div className="bg-white rounded-2xl border border-zinc-100 overflow-hidden shadow-sm">
+      {/* Mobile card list */}
+      <div className="sm:hidden space-y-3">
+        {pages === undefined ? (
+          <div className="flex flex-col items-center gap-4 py-16">
+            <div className="size-8 rounded-full border-2 border-zinc-100 border-t-primary animate-spin" />
+            <p className="text-xs text-zinc-400 uppercase tracking-widest font-bold">Carregando...</p>
+          </div>
+        ) : pages.length === 0 ? (
+          <div className="flex flex-col items-center gap-4 py-16">
+            <div className="size-14 rounded-2xl bg-zinc-50 flex items-center justify-center">
+              <Search className="size-6 text-zinc-200" />
+            </div>
+            <p className="text-zinc-400 text-sm">Nenhuma página cadastrada.</p>
+          </div>
+        ) : pages.map((page) => (
+          <div key={page._id} className="bg-white border border-zinc-100 rounded-2xl p-4 flex items-center justify-between gap-3 shadow-sm">
+            <div className="flex items-center gap-3 min-w-0">
+              <div className="shrink-0 size-10 rounded-xl bg-zinc-50 border border-zinc-100 flex items-center justify-center">
+                <Layout className="size-4 text-zinc-400" />
+              </div>
+              <div className="min-w-0">
+                <p className="font-ui font-medium text-sm text-zinc-900 truncate">{page.title}</p>
+                <div className="flex items-center gap-2 mt-0.5">
+                  <code className="text-[9px] text-zinc-400 font-mono">/{page.slug}</code>
+                  <button
+                    onClick={() => toggleStatus(page._id, page.status)}
+                    className={`text-[9px] font-bold uppercase tracking-widest px-2 py-0.5 rounded-md transition-all ${page.status === "published" ? "bg-primary/10 text-primary" : "bg-zinc-100 text-zinc-400"}`}
+                  >
+                    {page.status === "published" ? "Publicada" : "Rascunho"}
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div className="flex items-center gap-1 shrink-0">
+              <Button variant="secondary" size="icon-sm" onClick={() => router.push(`/admin/pages/${page._id}`)}>
+                <Pencil className="size-3.5" />
+              </Button>
+              <Button variant="ghost" size="icon-sm" onClick={() => handleDelete(page._id)} className="text-zinc-300 hover:text-red-500 hover:bg-red-50">
+                <Trash2 className="size-3.5" />
+              </Button>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Desktop table */}
+      <div className="hidden sm:block bg-white rounded-2xl border border-zinc-100 overflow-hidden shadow-sm">
         <Table>
           <TableHeader className="bg-zinc-50/50">
             <TableRow className="border-zinc-100 hover:bg-transparent">
@@ -157,20 +204,20 @@ export default function PagesManagementPage() {
       </div>
 
       {/* Info Highlight */}
-      <div className="p-12 rounded-2xl bg-zinc-50 border border-zinc-100 flex flex-col md:flex-row items-center gap-12 group">
-        <div className="flex-1 space-y-6">
-          <div className="size-14 rounded-2xl bg-white border border-zinc-100 flex items-center justify-center shadow-sm group-hover:rotate-12 transition-transform duration-500">
-            <Globe className="size-6 text-zinc-900" />
+      <div className="p-6 sm:p-12 rounded-2xl bg-zinc-50 border border-zinc-100 flex flex-col md:flex-row items-start md:items-center gap-6 sm:gap-12 group">
+        <div className="flex-1 space-y-4 sm:space-y-6">
+          <div className="size-12 sm:size-14 rounded-2xl bg-white border border-zinc-100 flex items-center justify-center shadow-sm group-hover:rotate-12 transition-transform duration-500">
+            <Globe className="size-5 sm:size-6 text-zinc-900" />
           </div>
           <div className="space-y-2">
-            <h3 className="text-2xl font-medium font-ui text-zinc-900  ">Arquitetura de Conteúdo</h3>
-            <p className="text-zinc-500 text-sm leading-relaxed max-w-xl  ">
+            <h3 className="text-xl sm:text-2xl font-medium font-ui text-zinc-900">Arquitetura de Conteúdo</h3>
+            <p className="text-zinc-500 text-sm leading-relaxed max-w-xl">
               Páginas institucionais são construídas através de um sistema de blocos modulares.
               Isso permite que você crie layouts únicos para Metodologias, FAQ, Sobre e outras seções específicas sem depender de templates fixos.
             </p>
           </div>
         </div>
-        <div className="size-56 bg-white rounded-2xl border border-zinc-100 shadow-xl shadow-zinc-900/5 flex items-center justify-center relative overflow-hidden">
+        <div className="hidden md:flex size-56 bg-white rounded-2xl border border-zinc-100 shadow-xl shadow-zinc-900/5 items-center justify-center relative overflow-hidden">
           <Layout className="size-20 text-zinc-50 group-hover:scale-110 transition-transform duration-700" />
           <div className="absolute inset-0 bg-gradient-to-tr from-zinc-50/50 to-transparent pointer-events-none" />
         </div>

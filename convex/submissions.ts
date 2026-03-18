@@ -11,6 +11,31 @@ export const getSubmissions = query({
   },
 });
 
+export const getSubmissionsWithForms = query({
+  handler: async (ctx) => {
+    const [submissions, forms] = await Promise.all([
+      ctx.db.query("submissions").withIndex("by_created").order("desc").collect(),
+      ctx.db.query("forms").collect(),
+    ]);
+
+    const formsMap = new Map(
+      forms.map((f) => [
+        f._id.toString(),
+        { title: f.title, fields: f.fields.map((field) => ({ id: field.id, label: field.label })) },
+      ])
+    );
+
+    return submissions.map((sub) => {
+      const form = formsMap.get(sub.formId.toString());
+      return {
+        ...sub,
+        formTitle: form?.title ?? "Formulário removido",
+        formFields: form?.fields ?? [],
+      };
+    });
+  },
+});
+
 export const getSubmissionsByForm = query({
   args: { formId: v.id("forms") },
   handler: async (ctx, args) => {

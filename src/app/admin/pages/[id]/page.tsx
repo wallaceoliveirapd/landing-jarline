@@ -97,8 +97,8 @@ export default function InstitutionalPageEditor({ params }: { params: Promise<{ 
   };
 
   return (
-    <div className="max-w-[1000px] mx-auto space-y-12 py-8 pb-40">
-      <header className="flex flex-col gap-8 border-b border-zinc-100 pb-12">
+    <div className="max-w-[1000px] mx-auto space-y-6 sm:space-y-12 py-4 sm:py-8 pb-28 sm:pb-40">
+      <header className="flex flex-col gap-5 sm:gap-8 border-b border-zinc-100 pb-6 sm:pb-12">
         <button
           onClick={() => router.back()}
           className="group flex items-center gap-3 text-[10px] font-bold uppercase tracking-widest text-zinc-400 hover:text-zinc-900 transition-all w-fit"
@@ -109,34 +109,36 @@ export default function InstitutionalPageEditor({ params }: { params: Promise<{ 
           Voltar para Listagem
         </button>
 
-        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-8">
-          <div className="space-y-4">
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-5 sm:gap-8">
+          <div className="space-y-3 sm:space-y-4">
             <div className="flex items-center gap-2">
               <div className="h-px w-8 bg-primary" />
               <span className="text-[10px] font-medium uppercase tracking-[0.2em] text-zinc-400 font-ui">Módulo Institucional</span>
             </div>
-            <h2 className="text-5xl font-medium tracking-tighter text-zinc-900 font-display  ">
+            <h2 className="text-2xl sm:text-5xl font-medium tracking-tighter text-zinc-900 font-display">
               {isNew ? "Nova Página" : "Editar Página"}
             </h2>
-            <p className="text-zinc-500 text-sm max-w-md">Controle de páginas estáticas e conteúdo modular (PRD Seção 8).</p>
+            <p className="text-zinc-500 text-sm max-w-md hidden sm:block">Controle de páginas estáticas e conteúdo modular (PRD Seção 8).</p>
           </div>
 
           <div className="flex items-center gap-3">
-            <Button variant="ghost" onClick={() => router.push("/admin/pages")} className="h-14 px-8 rounded-lg text-[10px] font-medium uppercase tracking-widest text-zinc-400 font-ui">Cancelar</Button>
+            <Button variant="ghost" onClick={() => router.push("/admin/pages")} className="h-10 sm:h-14 px-4 sm:px-8 rounded-lg text-[10px] font-medium uppercase tracking-widest text-zinc-400 font-ui hidden sm:flex">Cancelar</Button>
           </div>
         </div>
       </header>
 
-      <form onSubmit={handleSave} className="space-y-20">
+      <form onSubmit={handleSave} className="space-y-10 sm:space-y-20">
         <Tabs defaultValue="base" className="w-full">
-          <TabsList className="mb-16 h-20">
-            <TabsTrigger value="base">Informações Base</TabsTrigger>
-            <TabsTrigger value="content">Editor Modular</TabsTrigger>
-            <TabsTrigger value="seo">SEO & Visibilidade</TabsTrigger>
-          </TabsList>
+          <div className="overflow-x-auto no-scrollbar mb-8 sm:mb-16">
+            <TabsList className="w-max">
+              <TabsTrigger value="base" className="text-xs sm:text-sm">Informações Base</TabsTrigger>
+              <TabsTrigger value="content" className="text-xs sm:text-sm">Editor Modular</TabsTrigger>
+              <TabsTrigger value="seo" className="text-xs sm:text-sm">SEO</TabsTrigger>
+            </TabsList>
+          </div>
 
-          <TabsContent value="base" className="space-y-16 animate-in fade-in slide-in-from-bottom-4 duration-700">
-            <div className="grid grid-cols-2 gap-12">
+          <TabsContent value="base" className="space-y-8 sm:space-y-16 animate-in fade-in slide-in-from-bottom-4 duration-700">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 sm:gap-12">
               <div className="space-y-4 col-span-2">
                 <Label className="text-[10px] font-medium uppercase tracking-[0.2em] text-zinc-400">Título da Página</Label>
                 <Input
@@ -216,9 +218,9 @@ export default function InstitutionalPageEditor({ params }: { params: Promise<{ 
             </div>
           </TabsContent>
 
-          <TabsContent value="seo" className="space-y-16 animate-in fade-in slide-in-from-bottom-4 duration-700">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-              <div className="space-y-10">
+          <TabsContent value="seo" className="space-y-8 sm:space-y-16 animate-in fade-in slide-in-from-bottom-4 duration-700">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-12">
+              <div className="space-y-6 sm:space-y-10">
                 <div className="flex items-center gap-4">
                   <div className="size-10 rounded-xl bg-primary flex items-center justify-center text-white">
                     <Globe className="size-5" />
@@ -226,7 +228,7 @@ export default function InstitutionalPageEditor({ params }: { params: Promise<{ 
                   <h4 className="text-xl font-ui font-medium text-zinc-900 leading-tight">Google Indexation</h4>
                 </div>
 
-                <div className="p-10 bg-zinc-50 rounded-2xl border border-zinc-100 space-y-8 shadow-inner">
+                <div className="p-5 sm:p-10 bg-zinc-50 rounded-2xl border border-zinc-100 space-y-6 sm:space-y-8 shadow-inner">
                   <div className="space-y-4">
                     <Label className="text-[10px] font-medium uppercase tracking-widest text-zinc-400 font-ui">SEO Meta Title</Label>
                     <Input
@@ -248,7 +250,7 @@ export default function InstitutionalPageEditor({ params }: { params: Promise<{ 
                 </div>
               </div>
 
-              <div className="space-y-10">
+              <div className="space-y-6 sm:space-y-10">
                 <div className="flex items-center gap-4">
                   <div className="size-10 rounded-xl bg-primary flex items-center justify-center text-white">
                     <Settings2 className="size-5" />
@@ -265,7 +267,7 @@ export default function InstitutionalPageEditor({ params }: { params: Promise<{ 
                     aspectRatio="video"
                   />
 
-                  <div className="flex items-center justify-between p-10 bg-zinc-50 rounded-2xl border border-zinc-100 hover:bg-white transition-all shadow-sm">
+                  <div className="flex items-center justify-between p-5 sm:p-10 bg-zinc-50 rounded-2xl border border-zinc-100 hover:bg-white transition-all shadow-sm">
                     <div className="space-y-2">
                       <p className="font-ui font-medium text-lg leading-none text-zinc-900">Estado: {formData.status === "published" ? "Público" : "Draft"}</p>
                       <p className="text-[10px] text-zinc-400 uppercase tracking-widest font-medium font-ui">Visibilidade no site principal</p>
@@ -286,19 +288,20 @@ export default function InstitutionalPageEditor({ params }: { params: Promise<{ 
       {/* Global Actions Footer */}
       <div className="fixed bottom-10 left-0 right-0 z-50 px-4 sm:px-8 pointer-events-none transition-all duration-300 lg:left-[var(--sidebar-width)] group-data-[state=collapsed]/sidebar-wrapper:lg:left-[var(--sidebar-width-icon)]">
         <div className="max-w-[1000px] mx-auto w-full pointer-events-auto">
-          <div className="bg-white/90 backdrop-blur-3xl border border-zinc-100 p-8 rounded-2xl shadow-2xl flex items-center justify-between animate-in slide-in-from-bottom-8 duration-700">
-            <div className="flex items-center gap-6 pl-4 font-ui">
-              <div className={`size-3 rounded-full ${formData.status === 'published' ? 'bg-primary shadow-[0_0_15px_rgba(88,89,71,0.2)]' : 'bg-red-400'}`} />
+          <div className="bg-white/90 backdrop-blur-3xl border border-zinc-100 p-4 sm:p-8 rounded-2xl shadow-2xl flex items-center justify-between gap-3 animate-in slide-in-from-bottom-8 duration-700">
+            <div className="flex items-center gap-3 sm:gap-6 sm:pl-4 font-ui">
+              <div className={`size-2.5 sm:size-3 rounded-full shrink-0 ${formData.status === 'published' ? 'bg-primary shadow-[0_0_15px_rgba(88,89,71,0.2)]' : 'bg-red-400'}`} />
               <div className="flex flex-col">
-                <span className="text-[10px] font-medium uppercase tracking-widest text-zinc-900 font-ui text-left">Status da Página</span>
-                <span className="text-[9px] text-zinc-400 uppercase tracking-widest text-left font-ui">{formData.status === 'published' ? 'Ao vivo' : 'Rascunho de trabalho'}</span>
+                <span className="text-[10px] font-medium uppercase tracking-widest text-zinc-900 font-ui text-left">Status</span>
+                <span className="text-[9px] text-zinc-400 uppercase tracking-widest text-left font-ui">{formData.status === 'published' ? 'Ao vivo' : 'Rascunho'}</span>
               </div>
             </div>
-            <div className="flex items-center gap-4">
-              <Button variant="ghost" onClick={() => router.push("/admin/pages")} className="h-14 px-8 rounded-lg text-[10px] font-medium uppercase tracking-widest text-zinc-400 hover:text-zinc-900 font-ui">Descartar</Button>
-              <Button variant="premium" size="xl" onClick={handleSave} className="px-12 h-16 rounded-xl gap-4 font-ui text-[11px] uppercase tracking-widest font-medium">
-                <Save className="size-5" />
-                Confirmar & Salvar
+            <div className="flex items-center gap-2 sm:gap-4">
+              <Button variant="ghost" onClick={() => router.push("/admin/pages")} className="h-10 sm:h-14 px-4 sm:px-8 rounded-lg text-[10px] font-medium uppercase tracking-widest text-zinc-400 hover:text-zinc-900 font-ui hidden sm:flex">Descartar</Button>
+              <Button variant="premium" onClick={handleSave} className="px-6 sm:px-12 h-11 sm:h-16 rounded-xl gap-2 sm:gap-4 font-ui text-[11px] uppercase tracking-widest font-medium">
+                <Save className="size-4 sm:size-5" />
+                <span className="hidden sm:inline">Confirmar &amp; Salvar</span>
+                <span className="sm:hidden">Salvar</span>
               </Button>
             </div>
           </div>

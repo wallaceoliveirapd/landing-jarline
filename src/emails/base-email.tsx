@@ -40,8 +40,8 @@ export function EmailBaseTemplate({ children, title, previewText }: EmailTemplat
           <!-- Header with Logo -->
           <tr>
             <td style="background-color: #585947; padding: 32px 40px; text-align: center;">
-              <a href="#" style="display: inline-block;">
-                <img src="/assets/images/logo/logo-branca.svg" alt="Jarline Vieira" width="140" height="22" style="display: block;" />
+              <a href="https://www.jarlinevieira.com" style="display: inline-block;">
+                <img src="https://www.jarlinevieira.com/assets/images/logo/logo-clara.png" alt="Jarline Vieira" width="140" style="display: block;" />
               </a>
             </td>
           </tr>
@@ -61,6 +61,9 @@ export function EmailBaseTemplate({ children, title, previewText }: EmailTemplat
           <!-- Footer -->
           <tr>
             <td style="background-color: #f6f5ed; padding: 32px 40px; text-align: center; border-top: 1px solid rgba(88, 89, 71, 0.1);">
+              <a href="https://www.jarlinevieira.com" style="display: inline-block; margin-bottom: 16px;">
+                <img src="https://www.jarlinevieira.com/assets/images/logo/logo-escura.png" alt="Jarline Vieira" width="100" style="display: block;" />
+              </a>
               <p style="margin: 0 0 8px; font-size: 12px; color: #8a8a80; letter-spacing: 0.5px; text-transform: uppercase;">
                 Jarline Vieira Arquitetura & Interiores
               </p>

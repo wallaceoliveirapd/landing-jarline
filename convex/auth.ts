@@ -198,6 +198,7 @@ export const updateUser = mutation({
     name: v.string(),
     email: v.string(),
     role: v.optional(v.string()),
+    passwordHash: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
     const user = await ctx.db.get(args.userId);
@@ -205,11 +206,17 @@ export const updateUser = mutation({
       throw new Error("Usuário não encontrado");
     }
 
-    await ctx.db.patch(args.userId, {
+    const updates: Record<string, string> = {
       name: args.name,
       email: args.email,
       role: args.role || user.role,
-    });
+    };
+
+    if (args.passwordHash) {
+      updates.passwordHash = args.passwordHash;
+    }
+
+    await ctx.db.patch(args.userId, updates);
 
     return { success: true };
   },

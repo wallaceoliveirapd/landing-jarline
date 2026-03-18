@@ -17,18 +17,18 @@ export function SectionCard({ id, title, isEnabled, onToggle, children }: Sectio
     <Card className="border border-zinc-100 shadow-none bg-white rounded-2xl overflow-hidden">
       <Accordion className="w-full">
         <AccordionItem value={id} className="border-none">
-          <div className="flex items-center justify-between px-8 py-6">
-            <AccordionTrigger className="flex-1 hover:no-underline font-ui font-medium text-lg text-zinc-900 py-0 text-left">
+          <div className="flex items-center justify-between px-4 sm:px-8 py-4 sm:py-6">
+            <AccordionTrigger className="flex-1 hover:no-underline font-ui font-medium text-base sm:text-lg text-zinc-900 py-0 text-left">
               {title}
             </AccordionTrigger>
-            <div className="flex items-center gap-4 ml-4">
-              <span className={`text-[10px] font-bold uppercase tracking-[0.2em] transition-colors ${isEnabled ? "text-zinc-900" : "text-zinc-300"}`}>
+            <div className="flex items-center gap-3 sm:gap-4 ml-4">
+              <span className={`text-[10px] font-bold uppercase tracking-[0.2em] transition-colors hidden sm:block ${isEnabled ? "text-zinc-900" : "text-zinc-300"}`}>
                 {isEnabled ? "Online" : "Offline"}
               </span>
               <Switch checked={isEnabled} onCheckedChange={onToggle} className="data-[state=checked]:bg-primary" />
             </div>
           </div>
-          <AccordionContent className="px-8 pb-10 space-y-6">
+          <AccordionContent className="px-4 sm:px-8 pb-6 sm:pb-10 space-y-6">
             {!isEnabled && (
               <div className="bg-zinc-50 border border-zinc-100 rounded-2xl p-6 mb-4">
                 <p className="text-zinc-500 text-xs font-medium uppercase tracking-widest font-ui">Status: Desativado</p>

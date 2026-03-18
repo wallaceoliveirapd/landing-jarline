@@ -64,7 +64,7 @@ export function AdminSidebar() {
     <Sidebar className="border-r border-zinc-100 bg-white">
       <SidebarContent className="bg-white px-2 no-scrollbar">
         {/* Brand Header */}
-        <div className="flex items-center gap-3 px-6 py-12">
+        <div className="flex items-center gap-3 px-6 py-8 sm:py-12">
           <div className="flex aspect-square size-10 items-center justify-center rounded-xl bg-primary text-white">
             <span className="font-display font-medium text-2xl leading-none">J</span>
           </div>

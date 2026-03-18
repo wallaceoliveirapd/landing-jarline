@@ -56,30 +56,30 @@ export default function SettingsPage() {
   };
 
   return (
-    <div className="max-w-[1200px] mx-auto space-y-12 py-8 pb-32">
-      <div className="flex flex-col gap-4 border-b border-zinc-100 pb-12">
+    <div className="max-w-[1200px] mx-auto space-y-6 sm:space-y-12 py-4 sm:py-8 pb-20 sm:pb-32">
+      <div className="flex flex-col gap-3 sm:gap-4 border-b border-zinc-100 pb-6 sm:pb-12">
         <div className="flex items-center gap-2">
           <div className="h-px w-8 bg-primary" />
           <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-zinc-400 font-ui">Configurações Gerais</span>
         </div>
-        <h2 className="text-4xl font-medium tracking-tight text-zinc-900 font-display">Perfil da Marca</h2>
-        <p className="text-zinc-500 text-sm max-w-md">Gerencie as informações institucionais, dados de contato e presença digital.</p>
+        <h2 className="text-2xl sm:text-4xl font-medium tracking-tight text-zinc-900 font-display">Perfil da Marca</h2>
+        <p className="text-zinc-500 text-sm max-w-md hidden sm:block">Gerencie as informações institucionais, dados de contato e presença digital.</p>
       </div>
 
       <div className="bg-white rounded-2xl border border-zinc-100 overflow-hidden shadow-sm">
-        <div className="bg-primary p-10 text-white flex items-center justify-between">
-          <div className="flex items-center gap-6">
-            <div className="size-14 rounded-2xl bg-white/10 flex items-center justify-center text-white backdrop-blur-xl">
-              <User className="size-7" />
+        <div className="bg-primary p-6 sm:p-10 text-white flex items-center justify-between">
+          <div className="flex items-center gap-4 sm:gap-6">
+            <div className="size-12 sm:size-14 rounded-2xl bg-white/10 flex items-center justify-center text-white backdrop-blur-xl">
+              <User className="size-6 sm:size-7" />
             </div>
             <div>
-              <h3 className="text-xl font-medium font-ui leading-tight">Identidade Institucional</h3>
+              <h3 className="text-lg sm:text-xl font-medium font-ui leading-tight">Identidade Institucional</h3>
               <p className="text-zinc-400 text-[10px] uppercase tracking-widest mt-1 font-ui">Dados globais do ecossistema</p>
             </div>
           </div>
         </div>
 
-        <div className="p-10 space-y-10">
+        <div className="p-5 sm:p-10 space-y-6 sm:space-y-10">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
             <div className="space-y-4">
               <Label className="text-[10px] font-bold uppercase tracking-widest text-zinc-400">Nome Oficial</Label>

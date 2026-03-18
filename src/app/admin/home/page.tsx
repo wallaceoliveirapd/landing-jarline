@@ -179,14 +179,14 @@ export default function HomeManagementPage() {
   };
 
   return (
-    <div className="max-w-[1400px] mx-auto space-y-12 py-8 pb-32">
-      <div className="flex flex-col gap-4 border-b border-zinc-100 pb-12">
+    <div className="max-w-[1400px] mx-auto space-y-6 sm:space-y-12 py-4 sm:py-8 pb-20 sm:pb-32">
+      <div className="flex flex-col gap-3 sm:gap-4 border-b border-zinc-100 pb-6 sm:pb-12">
         <div className="flex items-center gap-2">
           <div className="h-px w-8 bg-primary" />
           <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-zinc-400 font-ui">Editor de Conteúdo Principal</span>
         </div>
-        <h2 className="text-4xl font-medium tracking-tight text-zinc-900 font-display">Página Inicial</h2>
-        <p className="text-zinc-500 text-sm max-w-md">Controle absoluto de cada módulo, seguindo rigorosamente as definições do PRD Jarline Vieira.</p>
+        <h2 className="text-2xl sm:text-4xl font-medium tracking-tight text-zinc-900 font-display">Página Inicial</h2>
+        <p className="text-zinc-500 text-sm max-w-md hidden sm:block">Controle absoluto de cada módulo, seguindo rigorosamente as definições do PRD Jarline Vieira.</p>
       </div>
 
       <div className="grid grid-cols-1 xl:grid-cols-[1fr_400px] gap-8 items-start">

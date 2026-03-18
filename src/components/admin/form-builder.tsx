@@ -155,10 +155,10 @@ export function FormBuilder({ fields, onChange }: FormBuilderProps) {
   };
 
   return (
-    <div className="p-10 rounded-[3rem] border border-zinc-100 bg-zinc-50/20">
-      <header className="flex items-center justify-between mb-10">
+    <div className="p-4 sm:p-10 rounded-2xl sm:rounded-[3rem] border border-zinc-100 bg-zinc-50/20">
+      <header className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4 sm:mb-10">
         <div className="space-y-1">
-          <h4 className="font-ui font-medium text-2xl text-zinc-900 leading-tight">
+          <h4 className="font-ui font-medium text-xl sm:text-2xl text-zinc-900 leading-tight">
             Construtor Visual
           </h4>
           <p className="text-[10px] font-medium uppercase tracking-widest text-zinc-400 font-ui">
@@ -170,13 +170,13 @@ export function FormBuilder({ fields, onChange }: FormBuilderProps) {
           type="button"
           onClick={addField}
           size="sm"
-          className="rounded-xl font-ui text-[10px] uppercase font-medium tracking-widest px-6 h-12 bg-primary text-white hover:bg-primary/90"
+          className="rounded-xl font-ui text-[10px] uppercase font-medium tracking-widest px-6 h-12 bg-primary text-white hover:bg-primary/90 w-full sm:w-auto"
         >
           <Plus className="size-4 mr-2" /> Adicionar Campo
         </Button>
       </header>
 
-      <div className="space-y-3">
+      <div className="space-y-2">
         {fields.map((field, idx) => {
           const isDraggingItem = isDragging && dragItem.current === idx;
           const hasOptions = HAS_OPTIONS.includes(field.type);
@@ -199,14 +199,14 @@ export function FormBuilder({ fields, onChange }: FormBuilderProps) {
               }`}
             >
               {/* ── Header ─────────────────────────────────────── */}
-              <div className="flex items-center gap-3 px-5 pt-5 pb-0">
+              <div className="flex flex-wrap items-center gap-2 px-3 sm:px-5 pt-3 sm:pt-5 pb-0">
                 {/* Drag handle */}
-                <div className="cursor-grab active:cursor-grabbing text-zinc-300 hover:text-zinc-500 shrink-0 pt-0.5">
+                <div className="cursor-grab active:cursor-grabbing text-zinc-300 hover:text-zinc-500 shrink-0 pt-0.5 hidden sm:block">
                   <GripVertical className="size-4" />
                 </div>
 
                 {/* Label input */}
-                <div className="flex-1 min-w-0">
+                <div className="flex-1 min-w-0" style={{ minWidth: "120px" }}>
                   <Input
                     value={field.label}
                     onChange={(e) => updateField(idx, { label: e.target.value })}
@@ -216,7 +216,7 @@ export function FormBuilder({ fields, onChange }: FormBuilderProps) {
                 </div>
 
                 {/* Type badge + selector */}
-                <div className="w-52 shrink-0">
+                <div className="w-36 sm:w-52 shrink-0">
                   <Select
                     value={field.type}
                     onValueChange={(val) => {
@@ -274,14 +274,14 @@ export function FormBuilder({ fields, onChange }: FormBuilderProps) {
                   type="button"
                   onClick={() => removeField(field.id)}
                   variant="ghost"
-                  className="size-9 text-zinc-300 hover:text-red-500 rounded-xl hover:bg-red-50 transition-all opacity-0 group-hover:opacity-100 shrink-0"
+                  className="size-9 text-zinc-300 hover:text-red-500 rounded-xl hover:bg-red-50 transition-all opacity-100 sm:opacity-0 sm:group-hover:opacity-100 shrink-0"
                 >
                   <X className="size-4" />
                 </Button>
               </div>
 
               {/* ── Body ───────────────────────────────────────── */}
-              <div className="px-5 pb-5 pt-4 space-y-3 ml-7">
+              <div className="px-3 sm:px-5 pb-3 sm:pb-5 pt-2 sm:pt-4 space-y-2.5 sm:ml-7">
                 {/* Placeholder + Help text */}
                 {hasPlaceholder && (
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
@@ -432,7 +432,7 @@ export function FormBuilder({ fields, onChange }: FormBuilderProps) {
 
                 {/* Width selector */}
                 {!isLayout && field.type !== "separator" && (
-                  <div className="flex items-center gap-2 pt-1">
+                  <div className="flex flex-wrap items-center gap-2 pt-1">
                     <span className="text-[9px] uppercase tracking-widest text-zinc-400 font-medium font-ui mr-1">
                       Largura:
                     </span>

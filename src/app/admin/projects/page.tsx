@@ -83,28 +83,78 @@ export default function ProjectsManagementPage() {
   };
 
   return (
-    <div className="max-w-[1200px] mx-auto space-y-12 py-8 pb-32">
-      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-8 border-b border-zinc-100 pb-12">
-        <div className="space-y-4">
+    <div className="max-w-[1200px] mx-auto space-y-6 sm:space-y-12 py-4 sm:py-8 pb-20 sm:pb-32">
+      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 sm:gap-8 border-b border-zinc-100 pb-6 sm:pb-12">
+        <div className="space-y-3 sm:space-y-4">
           <div className="flex items-center gap-2">
             <div className="h-px w-8 bg-primary" />
             <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-zinc-400 font-ui">Módulo de Portfólio</span>
           </div>
-          <h2 className="text-4xl font-medium tracking-tight text-zinc-900 font-ui  ">Gestão de Projetos</h2>
-          <p className="text-zinc-500 text-sm max-w-md  ">Controle editorial completo conforme Seção 7 do PRD Jarline Vieira.</p>
+          <h2 className="text-2xl sm:text-4xl font-medium tracking-tight text-zinc-900 font-ui">Gestão de Projetos</h2>
+          <p className="text-zinc-500 text-sm max-w-md hidden sm:block">Controle editorial completo conforme Seção 7 do PRD Jarline Vieira.</p>
         </div>
 
         <Button
           onClick={() => router.push("/admin/projects/new")}
           variant="premium"
-          size="xl"
+          size="lg"
+          className="w-full sm:w-auto"
         >
-          <Plus className="size-5 mr-3" />
+          <Plus className="size-4 mr-2" />
           Novo Projeto
         </Button>
       </div>
 
-      <div className="bg-white rounded-2xl border border-zinc-100 overflow-hidden shadow-sm">
+      {/* Mobile card list */}
+      <div className="sm:hidden space-y-3">
+        {projects === undefined ? (
+          <div className="flex flex-col items-center gap-4 py-16">
+            <div className="size-8 rounded-full border-2 border-zinc-100 border-t-primary animate-spin" />
+            <p className="text-xs text-zinc-400 uppercase tracking-widest font-bold">Carregando...</p>
+          </div>
+        ) : projects.length === 0 ? (
+          <div className="flex flex-col items-center gap-4 py-16">
+            <div className="size-14 rounded-2xl bg-zinc-50 flex items-center justify-center">
+              <Search className="size-6 text-zinc-200" />
+            </div>
+            <p className="text-zinc-400 text-sm">Nenhum projeto cadastrado.</p>
+          </div>
+        ) : projects.map((project) => (
+          <div key={project._id} className="bg-white border border-zinc-100 rounded-2xl p-4 flex items-center justify-between gap-3 shadow-sm">
+            <div className="flex items-center gap-3 min-w-0">
+              <div className="shrink-0 size-12 rounded-xl bg-zinc-50 border border-zinc-100 overflow-hidden">
+                {project.coverImage
+                  ? <img src={project.coverImage} className="size-full object-cover" alt={project.title} />
+                  : <ImageIconLucide className="size-5 text-zinc-300 m-auto mt-3.5" />
+                }
+              </div>
+              <div className="min-w-0">
+                <p className="font-ui font-medium text-sm text-zinc-900 truncate">{project.title}</p>
+                <div className="flex items-center gap-2 mt-0.5">
+                  <Badge className="text-[9px] uppercase font-bold tracking-widest px-1.5 py-0 h-4">{project.category || "Geral"}</Badge>
+                  <button
+                    onClick={() => toggleProjectStatus(project._id, project.status)}
+                    className={`text-[9px] font-bold uppercase tracking-widest px-2 py-0.5 rounded-md transition-all ${project.status === "published" ? "bg-primary/10 text-primary" : "bg-zinc-100 text-zinc-400"}`}
+                  >
+                    {project.status === "published" ? "Publicado" : "Rascunho"}
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div className="flex items-center gap-1 shrink-0">
+              <Button variant="secondary" size="icon-sm" onClick={() => router.push(`/admin/projects/${project._id}`)}>
+                <Pencil className="size-3.5" />
+              </Button>
+              <Button variant="ghost" size="icon-sm" onClick={() => handleDelete(project._id)} className="text-zinc-300 hover:text-red-500 hover:bg-red-50">
+                <Trash2 className="size-3.5" />
+              </Button>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Desktop table */}
+      <div className="hidden sm:block bg-white rounded-2xl border border-zinc-100 overflow-hidden shadow-sm">
         <Table>
           <TableHeader className="bg-zinc-50/50">
             <TableRow className="border-zinc-100 hover:bg-transparent">

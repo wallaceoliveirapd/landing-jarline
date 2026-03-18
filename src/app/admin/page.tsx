@@ -28,10 +28,10 @@ export default function AdminDashboardPage() {
   ];
 
   return (
-    <div className="max-w-[1200px] mx-auto space-y-16 py-8">
+    <div className="max-w-[1200px] mx-auto space-y-8 md:space-y-16 py-5 sm:py-8">
       {/* Header Area */}
       <div className="space-y-4">
-        <h2 className="text-4xl font-medium tracking-tight text-zinc-900 font-display">
+        <h2 className="text-2xl sm:text-4xl font-medium tracking-tight text-zinc-900 font-display">
           Visão Geral
         </h2>
         <div className="flex gap-3">
@@ -42,21 +42,21 @@ export default function AdminDashboardPage() {
       </div>
 
       {/* Quick Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-8">
         {stats.map((stat, i) => (
           <Link key={i} href={stat.href} className="group">
-            <div className="border border-zinc-100 rounded-2xl p-8 space-y-6 hover:border-primary/20 transition-all duration-500 bg-white hover:shadow-[0_20px_40px_-15px_rgba(88,89,71,0.08)]">
+            <div className="border border-zinc-100 rounded-2xl p-4 sm:p-8 space-y-3 sm:space-y-6 hover:border-primary/20 transition-all duration-500 bg-white hover:shadow-[0_20px_40px_-15px_rgba(88,89,71,0.08)]">
               <div className="flex items-center justify-between">
-                <div className="size-12 rounded-2xl bg-zinc-50 flex items-center justify-center text-primary transition-colors group-hover:bg-primary group-hover:text-white">
-                  <stat.icon className="size-6 transition-transform duration-500 group-hover:scale-110" />
+                <div className="size-10 sm:size-12 rounded-xl sm:rounded-2xl bg-zinc-50 flex items-center justify-center text-primary transition-colors group-hover:bg-primary group-hover:text-white">
+                  <stat.icon className="size-5 sm:size-6 transition-transform duration-500 group-hover:scale-110" />
                 </div>
-                <ArrowRight className="size-4 text-zinc-300 group-hover:text-primary transition-all opacity-0 group-hover:opacity-100 group-hover:translate-x-1" />
+                <ArrowRight className="size-4 text-zinc-300 group-hover:text-primary transition-all opacity-0 group-hover:opacity-100 group-hover:translate-x-1 hidden sm:block" />
               </div>
-              <div className="space-y-2">
-                <p className="text-3xl font-medium text-zinc-900 tracking-tight font-ui">{stat.value}</p>
+              <div className="space-y-1 sm:space-y-2">
+                <p className="text-2xl sm:text-3xl font-medium text-zinc-900 tracking-tight font-ui">{stat.value}</p>
                 <div>
-                  <p className="text-xs font-bold uppercase tracking-widest text-zinc-500 font-ui">{stat.label}</p>
-                  <p className="text-[11px] text-zinc-400 mt-1">{stat.sub}</p>
+                  <p className="text-[10px] sm:text-xs font-bold uppercase tracking-widest text-zinc-500 font-ui">{stat.label}</p>
+                  <p className="text-[10px] sm:text-[11px] text-zinc-400 mt-1 hidden sm:block">{stat.sub}</p>
                 </div>
               </div>
             </div>
@@ -65,9 +65,9 @@ export default function AdminDashboardPage() {
       </div>
 
       {/* Featured Action/Info */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-12 pt-4">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-12 pt-2 sm:pt-4">
         <div className="md:col-span-2">
-          <div className="p-12 rounded-2xl bg-primary text-white relative overflow-hidden group">
+          <div className="p-6 sm:p-12 rounded-2xl bg-primary text-white relative overflow-hidden group">
             {/* Subtle background decoration */}
             <div className="absolute top-0 right-0 w-64 h-64 bg-primary/10 rounded-full blur-[100px] -mr-32 -mt-32" />
 
@@ -88,8 +88,8 @@ export default function AdminDashboardPage() {
         </div>
 
         <div>
-          <div className="p-10 rounded-2xl border border-zinc-100 space-y-6 bg-[#FBFBFA]">
-            <h4 className="font-medium text-zinc-900 font-ui text-2xl">Suporte Técnico</h4>
+          <div className="p-6 sm:p-10 rounded-2xl border border-zinc-100 space-y-6 bg-[#FBFBFA]">
+            <h4 className="font-medium text-zinc-900 font-ui text-xl sm:text-2xl">Suporte Técnico</h4>
             <p className="text-sm text-zinc-500 leading-relaxed">
               Dúvidas sobre o funcionamento do CMS ou deseja implementar novas interações na landing page?
             </p>

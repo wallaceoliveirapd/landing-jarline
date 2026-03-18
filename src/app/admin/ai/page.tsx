@@ -108,46 +108,48 @@ export default function AIConfigurationPage() {
   };
 
   return (
-    <div className="max-w-[1200px] mx-auto space-y-12 py-8 pb-32">
-      <header className="flex flex-col gap-6 border-b border-zinc-100 pb-12">
+    <div className="max-w-[1200px] mx-auto space-y-6 sm:space-y-12 py-4 sm:py-8 pb-20 sm:pb-32">
+      <header className="flex flex-col gap-4 sm:gap-6 border-b border-zinc-100 pb-6 sm:pb-12">
         <div className="flex items-center gap-2">
           <div className="h-px w-8 bg-primary" />
           <span className="text-[10px] font-medium uppercase tracking-[0.2em] text-zinc-400 font-ui text-left">Brain & Intelligence</span>
         </div>
         <div className="flex items-end justify-between">
-          <div className="space-y-4">
-            <h2 className="text-5xl font-medium tracking-tighter text-zinc-900 font-ui   flex items-center gap-4">
+          <div className="space-y-3 sm:space-y-4">
+            <h2 className="text-2xl sm:text-5xl font-medium tracking-tighter text-zinc-900 font-ui flex items-center gap-3 sm:gap-4">
               Configuração da Jal
-              <Sparkles className="size-8 text-primary shadow-xl shadow-primary/20 animate-pulse" />
+              <Sparkles className="size-6 sm:size-8 text-primary shadow-xl shadow-primary/20 animate-pulse" />
             </h2>
-            <p className="text-zinc-500 text-sm max-w-md">Treinamento avançado baseado na Seção 10 do PRD para a inteligência operacional do site.</p>
+            <p className="text-zinc-500 text-sm max-w-md hidden sm:block">Treinamento avançado baseado na Seção 10 do PRD para a inteligência operacional do site.</p>
           </div>
         </div>
       </header>
 
       <Tabs defaultValue="personality" className="w-full">
-        <TabsList className="mb-12 h-20">
-          <TabsTrigger value="personality">Personalidade</TabsTrigger>
-          <TabsTrigger value="briefing">Briefing</TabsTrigger>
-          <TabsTrigger value="rules">Regras</TabsTrigger>
-          <TabsTrigger value="services">Serviços</TabsTrigger>
-          <TabsTrigger value="output">Output & CRM</TabsTrigger>
-          <TabsTrigger value="examples">Learning</TabsTrigger>
-        </TabsList>
+        <div className="overflow-x-auto no-scrollbar mb-6 sm:mb-12">
+          <TabsList className="w-max">
+            <TabsTrigger value="personality" className="text-xs sm:text-sm">Personalidade</TabsTrigger>
+            <TabsTrigger value="briefing" className="text-xs sm:text-sm">Briefing</TabsTrigger>
+            <TabsTrigger value="rules" className="text-xs sm:text-sm">Regras</TabsTrigger>
+            <TabsTrigger value="services" className="text-xs sm:text-sm">Serviços</TabsTrigger>
+            <TabsTrigger value="output" className="text-xs sm:text-sm">Output</TabsTrigger>
+            <TabsTrigger value="examples" className="text-xs sm:text-sm">Learning</TabsTrigger>
+          </TabsList>
+        </div>
 
-        <div className="bg-white rounded-[2.5rem] border border-zinc-100 p-12 shadow-sm">
-          <TabsContent value="personality" className="space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-700">
-            <div className="flex items-center gap-6 mb-8">
-              <div className="size-14 rounded-2xl bg-zinc-50 flex items-center justify-center text-primary">
-                <Bot className="size-8" />
+        <div className="bg-white rounded-2xl sm:rounded-[2.5rem] border border-zinc-100 p-5 sm:p-12 shadow-sm">
+          <TabsContent value="personality" className="space-y-8 sm:space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-700">
+            <div className="flex items-center gap-4 sm:gap-6 mb-6 sm:mb-8">
+              <div className="size-12 sm:size-14 rounded-2xl bg-zinc-50 flex items-center justify-center text-primary">
+                <Bot className="size-6 sm:size-8" />
               </div>
               <div>
-                <h3 className="text-2xl font-ui font-medium text-zinc-900">Personalidade & Voz</h3>
+                <h3 className="text-xl sm:text-2xl font-ui font-medium text-zinc-900">Personalidade & Voz</h3>
                 <p className="text-[10px] text-zinc-400 uppercase tracking-widest font-ui font-medium">Define quem ela é e como se comunica</p>
               </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-10">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 sm:gap-10">
               <div className="space-y-4">
                 <Label className="text-[10px] font-medium uppercase tracking-widest text-zinc-400 font-ui">Nome da Arquiteta</Label>
                 <Input
@@ -216,8 +218,8 @@ export default function AIConfigurationPage() {
                     Campo {idx + 1}
                   </div>
 
-                  <div className="grid grid-cols-3 gap-4">
-                    <div className="col-span-2 space-y-2">
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <div className="sm:col-span-2 space-y-2">
                       <Label className="text-[10px] font-medium uppercase tracking-widest text-zinc-400 font-ui">Pergunta</Label>
                       <Input
                         value={campo.label}
@@ -245,7 +247,7 @@ export default function AIConfigurationPage() {
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-3 gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                     <div className="space-y-2">
                       <Label className="text-[10px] font-medium uppercase tracking-widest text-zinc-400 font-ui">Opções (separadas por vírgula)</Label>
                       <Input
@@ -342,7 +344,7 @@ export default function AIConfigurationPage() {
                   className="min-h-[120px]"
                 />
               </div>
-              <div className="grid grid-cols-2 gap-10">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 sm:gap-10">
                 <div className="space-y-4">
                   <Label className="text-[10px] font-medium uppercase tracking-widest text-zinc-400 font-ui text-emerald-600">O que ela DEVE fazer</Label>
                   <Textarea
@@ -399,7 +401,7 @@ export default function AIConfigurationPage() {
                   placeholder="Se o cliente disser X, recomende Y..."
                 />
               </div>
-              <div className="grid grid-cols-2 gap-10">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 sm:gap-10">
                 <div className="space-y-4">
                   <Label className="text-[10px] font-medium uppercase tracking-widest text-zinc-400 font-ui">Perguntas Essenciais</Label>
                   <Textarea
@@ -451,7 +453,7 @@ export default function AIConfigurationPage() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-10">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 sm:gap-10">
                 <div className="flex items-center justify-between p-8 bg-zinc-50 rounded-2xl border border-zinc-100">
                   <div className="space-y-1">
                     <p className="font-ui font-medium text-zinc-900">Permitir Markdown</p>
@@ -572,21 +574,22 @@ export default function AIConfigurationPage() {
       {/* Global Actions Footer */}
       <div className="fixed bottom-10 left-0 right-0 z-50 px-4 sm:px-8 pointer-events-none transition-all duration-300 lg:left-[var(--sidebar-width)] group-data-[state=collapsed]/sidebar-wrapper:lg:left-[var(--sidebar-width-icon)]">
         <div className="max-w-[1000px] mx-auto w-full pointer-events-auto">
-          <div className="bg-white/90 backdrop-blur-3xl border border-zinc-100 p-8 rounded-2xl shadow-2xl flex items-center justify-between animate-in slide-in-from-bottom-8 duration-700">
-            <div className="flex items-center gap-6 pl-4 font-ui">
-              <div className="size-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary">
-                <Zap className="size-5" />
+          <div className="bg-white/90 backdrop-blur-3xl border border-zinc-100 p-4 sm:p-8 rounded-2xl shadow-2xl flex items-center justify-between gap-3 animate-in slide-in-from-bottom-8 duration-700">
+            <div className="flex items-center gap-3 sm:gap-6 sm:pl-4 font-ui">
+              <div className="size-9 sm:size-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary">
+                <Zap className="size-4 sm:size-5" />
               </div>
               <div className="flex flex-col">
                 <span className="text-[10px] font-medium uppercase tracking-widest text-zinc-900 font-ui text-left">Brain Engine</span>
-                <span className="text-[9px] text-zinc-400 uppercase tracking-widest text-left font-ui">Versão v1.0.4 (PRD 10)</span>
+                <span className="text-[9px] text-zinc-400 uppercase tracking-widest text-left font-ui hidden sm:block">Versão v1.0.4 (PRD 10)</span>
               </div>
             </div>
-            <div className="flex items-center gap-4">
-              <Button variant="ghost" onClick={() => window.location.reload()} className="h-14 px-8 rounded-lg text-[10px] font-medium uppercase tracking-widest text-zinc-400 hover:text-zinc-900 font-ui">Resetar</Button>
-              <Button variant="premium" size="xl" onClick={handleSave} className="px-12 h-16 rounded-xl gap-4 font-ui text-[11px] uppercase tracking-widest font-medium">
-                <Save className="size-5" />
-                Publicar Inteligência
+            <div className="flex items-center gap-2 sm:gap-4">
+              <Button variant="ghost" onClick={() => window.location.reload()} className="h-10 sm:h-14 px-4 sm:px-8 rounded-lg text-[10px] font-medium uppercase tracking-widest text-zinc-400 hover:text-zinc-900 font-ui hidden sm:flex">Resetar</Button>
+              <Button variant="premium" onClick={handleSave} className="px-6 sm:px-12 h-11 sm:h-16 rounded-xl gap-2 sm:gap-4 font-ui text-[11px] uppercase tracking-widest font-medium">
+                <Save className="size-4 sm:size-5" />
+                <span className="hidden sm:inline">Publicar Inteligência</span>
+                <span className="sm:hidden">Salvar</span>
               </Button>
             </div>
           </div>

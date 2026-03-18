@@ -61,6 +61,7 @@ export default function UsersPage() {
     name: "",
     email: "",
     role: "editor",
+    password: "",
   });
 
   const handleDelete = async (userId: any) => {
@@ -82,11 +83,18 @@ export default function UsersPage() {
     }
 
     try {
+      let passwordHash: string | undefined;
+      if (editedUser.password) {
+        const crypto = await import("crypto");
+        passwordHash = crypto.createHash("sha256").update(editedUser.password).digest("hex");
+      }
+
       await updateUser({
         userId: editingUser._id,
         name: editedUser.name,
         email: editedUser.email,
         role: editedUser.role,
+        ...(passwordHash ? { passwordHash } : {}),
       });
       toast.success("Usuário atualizado com sucesso.");
       setEditingUser(null);
@@ -101,6 +109,7 @@ export default function UsersPage() {
       name: user.name,
       email: user.email,
       role: user.role || "editor",
+      password: "",
     });
   };
 
@@ -140,19 +149,19 @@ export default function UsersPage() {
   });
 
   return (
-    <div className="max-w-[1200px] mx-auto space-y-12 py-8 pb-32">
-      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-8 border-b border-zinc-100 pb-12">
-        <div className="space-y-4">
+    <div className="max-w-[1200px] mx-auto space-y-6 sm:space-y-12 py-4 sm:py-8 pb-20 sm:pb-32">
+      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 sm:gap-8 border-b border-zinc-100 pb-6 sm:pb-12">
+        <div className="space-y-3 sm:space-y-4">
           <div className="flex items-center gap-2">
             <div className="h-px w-8 bg-primary" />
             <span className="text-[10px] font-medium uppercase tracking-[0.2em] text-zinc-400 font-ui">Gestão de Equipe</span>
           </div>
-          <h2 className="text-4xl font-medium tracking-tight text-zinc-900 font-display">Usuários do Sistema</h2>
-          <p className="text-zinc-500 text-sm max-w-md">Adicione ou remova permissões de novos editores ou administradores.</p>
+          <h2 className="text-2xl sm:text-4xl font-medium tracking-tight text-zinc-900 font-display">Usuários do Sistema</h2>
+          <p className="text-zinc-500 text-sm max-w-md hidden sm:block">Adicione ou remova permissões de novos editores ou administradores.</p>
         </div>
 
         <div className="flex items-center gap-3">
-          <Button variant="premium" size="lg" onClick={() => setIsAddingUser(true)}>
+          <Button variant="premium" size="lg" className="w-full sm:w-auto" onClick={() => setIsAddingUser(true)}>
             <Plus className="size-4 mr-2" /> Novo Usuário
           </Button>
         </div>
@@ -186,7 +195,45 @@ export default function UsersPage() {
           </div>
         </div>
       ) : (
-        <div className="bg-white rounded-3xl border border-zinc-100 shadow-xl shadow-black/5 overflow-hidden font-ui">
+        <>
+        {/* Mobile card list */}
+        <div className="sm:hidden space-y-3">
+          {filteredUsers.map((user: any) => (
+            <div key={user._id} className="bg-white border border-zinc-100 rounded-2xl p-4 flex items-center justify-between gap-3 shadow-sm">
+              <div className="flex items-center gap-3 min-w-0">
+                <div className="size-10 rounded-full bg-zinc-100 text-zinc-600 flex items-center justify-center font-bold text-xs uppercase shrink-0">
+                  {user.name?.split(" ").map((n: string) => n[0]).join("").substring(0, 2) || "U"}
+                </div>
+                <div className="min-w-0">
+                  <p className="font-ui font-medium text-sm text-zinc-900 truncate">{user.name}</p>
+                  <p className="text-[10px] text-zinc-400 truncate">{user.email}</p>
+                  <div className="mt-1">
+                    {user.role === "admin" ? (
+                      <Badge className="bg-primary/10 text-primary gap-1 px-2 h-5 rounded text-[9px] font-bold uppercase tracking-widest">
+                        <ShieldCheck className="size-2.5" /> Admin
+                      </Badge>
+                    ) : (
+                      <Badge className="bg-zinc-100 text-zinc-500 gap-1 px-2 h-5 rounded text-[9px] font-bold uppercase tracking-widest border-none shadow-none">
+                        <User className="size-2.5" /> Editor
+                      </Badge>
+                    )}
+                  </div>
+                </div>
+              </div>
+              <div className="flex items-center gap-1 shrink-0">
+                <Button variant="ghost" size="icon" onClick={() => openEditUser(user)} className="size-9 rounded-xl text-zinc-400 hover:text-primary">
+                  <MoreVertical className="size-4" />
+                </Button>
+                <Button variant="ghost" size="icon" onClick={() => handleDelete(user._id)} className="size-9 rounded-xl text-zinc-400 hover:text-red-500 hover:bg-red-50">
+                  <Trash2 className="size-4" />
+                </Button>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Desktop table */}
+        <div className="hidden sm:block bg-white rounded-3xl border border-zinc-100 shadow-xl shadow-black/5 overflow-hidden font-ui">
           <Table>
             <TableHeader className="bg-zinc-50/50">
               <TableRow className="border-zinc-100 hover:bg-transparent">
@@ -255,6 +302,7 @@ export default function UsersPage() {
             </TableBody>
           </Table>
         </div>
+        </>
       )}
 
       {/* Sheet to ADD Users */}
@@ -442,6 +490,19 @@ export default function UsersPage() {
                     </SelectItem>
                   </SelectContent>
                 </Select>
+              </div>
+
+              <div className="space-y-3 pt-6 border-t border-zinc-100">
+                <Label className="text-[10px] font-bold uppercase tracking-[0.2em] text-zinc-400">
+                  Nova Senha <span className="normal-case tracking-normal font-normal text-zinc-300">(deixe vazio para manter a atual)</span>
+                </Label>
+                <Input
+                  type="password"
+                  className="bg-zinc-100/50 border-zinc-200 rounded-xl h-14 px-6 text-sm focus:border-primary shadow-sm"
+                  placeholder="Digite uma nova senha..."
+                  value={editedUser.password}
+                  onChange={(e) => setEditedUser({...editedUser, password: e.target.value})}
+                />
               </div>
 
             </form>

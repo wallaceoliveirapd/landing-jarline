@@ -146,18 +146,18 @@ export default function MediaLibraryPage() {
   };
 
   return (
-    <div className="max-w-[1200px] mx-auto space-y-12 py-8 pb-32">
-      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-8 border-b border-zinc-100 pb-12">
+    <div className="max-w-[1200px] mx-auto space-y-6 sm:space-y-12 py-4 sm:py-8 pb-20 sm:pb-32">
+      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 sm:gap-8 border-b border-zinc-100 pb-6 sm:pb-12">
         <div className="space-y-4">
           <div className="flex items-center gap-2">
             <div className="h-px w-8 bg-primary" />
             <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-zinc-400 font-ui">Biblioteca de Ativos Digitais</span>
           </div>
-          <h2 className="text-4xl font-medium tracking-tight text-zinc-900 font-display">Mídia</h2>
-          <p className="text-zinc-500 text-sm max-w-md">Gerencie suas imagens, vídeos e documentos utilizados em todo o ecossistema.</p>
+          <h2 className="text-2xl sm:text-4xl font-medium tracking-tight text-zinc-900 font-display">Mídia</h2>
+          <p className="text-zinc-500 text-sm max-w-md hidden sm:block">Gerencie suas imagens, vídeos e documentos utilizados em todo o ecossistema.</p>
         </div>
 
-        <div>
+        <div className="w-full sm:w-auto">
           <input
             ref={fileInputRef}
             type="file"
@@ -166,10 +166,10 @@ export default function MediaLibraryPage() {
             onChange={handleUpload}
             className="hidden"
           />
-          <Button 
-            variant="premium" 
-            size="xl" 
-            className="whitespace-nowrap"
+          <Button
+            variant="premium"
+            size="lg"
+            className="whitespace-nowrap w-full sm:w-auto"
             onClick={() => fileInputRef.current?.click()}
             disabled={isUploading}
           >
@@ -188,8 +188,8 @@ export default function MediaLibraryPage() {
         </div>
       </div>
 
-      <div className="space-y-8">
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-6">
+      <div className="space-y-4 sm:space-y-8">
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-6">
           <Tabs value={filterType} onValueChange={setFilterType} className="w-full sm:w-auto">
             <TabsList className="bg-zinc-50 border border-zinc-100 p-1 rounded-2xl h-11">
               <TabsTrigger value="all" className="rounded-lg px-5 text-[10px] font-bold uppercase tracking-widest data-[state=active]:bg-white data-[state=active]:text-zinc-900 data-[state=active]:shadow-sm">Todos</TabsTrigger>
@@ -239,7 +239,7 @@ export default function MediaLibraryPage() {
             </p>
           </div>
         ) : viewMode === "grid" ? (
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-6">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-3 sm:gap-6">
             {filteredItems.map((item: any) => (
               <div 
                 key={item._id} 
@@ -293,40 +293,40 @@ export default function MediaLibraryPage() {
             <table className="w-full">
               <thead className="bg-zinc-50/50 border-b border-zinc-100">
                 <tr>
-                  <th className="text-left px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-zinc-400">Arquivo</th>
-                  <th className="text-left px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-zinc-400">Tipo</th>
-                  <th className="text-left px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-zinc-400">Tamanho</th>
-                  <th className="text-left px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-zinc-400">Data</th>
-                  <th className="text-right px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-zinc-400">Ações</th>
+                  <th className="text-left px-4 sm:px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-zinc-400">Arquivo</th>
+                  <th className="hidden sm:table-cell text-left px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-zinc-400">Tipo</th>
+                  <th className="text-left px-4 sm:px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-zinc-400">Tamanho</th>
+                  <th className="hidden sm:table-cell text-left px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-zinc-400">Data</th>
+                  <th className="text-right px-4 sm:px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-zinc-400">Ações</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-zinc-50">
                 {filteredItems.map((item: any) => (
                   <tr key={item._id} className="hover:bg-zinc-50/50 transition-colors">
-                    <td className="px-6 py-4">
+                    <td className="px-4 sm:px-6 py-4">
                       <div className="flex items-center gap-3">
-                        <div className="size-10 rounded-lg bg-zinc-50 overflow-hidden flex items-center justify-center">
+                        <div className="size-10 rounded-lg bg-zinc-50 overflow-hidden flex items-center justify-center shrink-0">
                           {item.type === "image" && item.url ? (
                             <img src={item.url} alt={item.alt || item.filename} className="w-full h-full object-cover" />
                           ) : (
                             getFileIcon(item.type)
                           )}
                         </div>
-                        <span className="text-sm font-medium text-zinc-900">{item.filename}</span>
+                        <span className="text-sm font-medium text-zinc-900 truncate max-w-[140px] sm:max-w-none">{item.filename}</span>
                       </div>
                     </td>
-                    <td className="px-6 py-4">
+                    <td className="hidden sm:table-cell px-6 py-4">
                       <span className="text-xs font-medium text-zinc-500 uppercase">{item.type}</span>
                     </td>
-                    <td className="px-6 py-4">
+                    <td className="px-4 sm:px-6 py-4">
                       <span className="text-xs text-zinc-500">{formatFileSize(item.size)}</span>
                     </td>
-                    <td className="px-6 py-4">
+                    <td className="hidden sm:table-cell px-6 py-4">
                       <span className="text-xs text-zinc-500">
                         {new Date(item.createdAt).toLocaleDateString("pt-BR")}
                       </span>
                     </td>
-                    <td className="px-6 py-4 text-right">
+                    <td className="px-4 sm:px-6 py-4 text-right">
                       <div className="flex items-center justify-end gap-2">
                         <Button variant="ghost" size="icon" onClick={() => setPreviewItem(item)}>
                           <Eye className="size-4 text-zinc-400" />

@@ -130,9 +130,9 @@ export default function FormEditorPage({ params }: { params: Promise<{ id: strin
   const set = (key: string, val: any) => setFormData((p: any) => ({ ...p, [key]: val }));
 
   return (
-    <div className="max-w-[1000px] mx-auto space-y-12 py-8 pb-40">
+    <div className="max-w-[1000px] mx-auto space-y-6 sm:space-y-12 py-4 sm:py-8 pb-28 sm:pb-40">
       {/* Header */}
-      <header className="flex flex-col gap-8 border-b border-zinc-100 pb-12">
+      <header className="flex flex-col gap-5 sm:gap-8 border-b border-zinc-100 pb-6 sm:pb-12">
         <button
           onClick={() => router.back()}
           className="group flex items-center gap-3 text-[10px] font-bold uppercase tracking-widest text-zinc-400 hover:text-zinc-900 transition-all w-fit"
@@ -143,39 +143,41 @@ export default function FormEditorPage({ params }: { params: Promise<{ id: strin
           Voltar para Central de Leads
         </button>
 
-        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-8">
-          <div className="space-y-4">
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-5 sm:gap-8">
+          <div className="space-y-3 sm:space-y-4">
             <div className="flex items-center gap-2">
               <div className="h-px w-8 bg-primary" />
               <span className="text-[10px] font-medium uppercase tracking-[0.2em] text-zinc-400 font-ui">
                 Mecanismo de Captura
               </span>
             </div>
-            <h2 className="text-5xl font-medium tracking-tighter text-zinc-900 font-ui">
+            <h2 className="text-2xl sm:text-5xl font-medium tracking-tighter text-zinc-900 font-ui">
               {isNew ? "Criar Formulário" : "Configurar Form"}
             </h2>
           </div>
         </div>
       </header>
 
-      <form onSubmit={handleSave} className="space-y-20">
+      <form onSubmit={handleSave} className="space-y-10 sm:space-y-20">
         <Tabs defaultValue="base" className="w-full">
-          <TabsList className="bg-zinc-100/40 p-1.5 mb-16 rounded-2xl w-fit flex h-20 border border-zinc-100/50 gap-1">
-            {[
-              { value: "base", label: "Definições", icon: LayoutTemplate },
-              { value: "fields", label: "Campos", icon: LayoutTemplate },
-              { value: "notifications", label: "Notificações", icon: Bell },
-              { value: "security", label: "Segurança", icon: Lock },
-            ].map(({ value, label, icon: Icon }) => (
-              <TabsTrigger
-                key={value}
-                value={value}
-                className="rounded-xl px-8 h-full text-[11px] uppercase font-bold tracking-[0.15em] data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:shadow-xl data-[state=active]:shadow-primary/20 text-zinc-400 transition-all duration-300"
-              >
-                {label}
-              </TabsTrigger>
-            ))}
-          </TabsList>
+          <div className="overflow-x-auto no-scrollbar mb-8 sm:mb-16">
+            <TabsList className="w-max bg-zinc-100/40 p-1.5 rounded-2xl border border-zinc-100/50">
+              {[
+                { value: "base", label: "Definições", icon: LayoutTemplate },
+                { value: "fields", label: "Campos", icon: LayoutTemplate },
+                { value: "notifications", label: "Notificações", icon: Bell },
+                { value: "security", label: "Segurança", icon: Lock },
+              ].map(({ value, label }) => (
+                <TabsTrigger
+                  key={value}
+                  value={value}
+                  className="rounded-xl px-4 sm:px-8 py-2 sm:py-0 sm:h-14 text-[10px] sm:text-[11px] uppercase font-bold tracking-[0.15em] data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:shadow-xl data-[state=active]:shadow-primary/20 text-zinc-400 transition-all duration-300"
+                >
+                  {label}
+                </TabsTrigger>
+              ))}
+            </TabsList>
+          </div>
 
           {/* ── Definições ─────────────────────────────────────── */}
           <TabsContent value="base" className="space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-700">
@@ -267,7 +269,7 @@ export default function FormEditorPage({ params }: { params: Promise<{ id: strin
           </TabsContent>
 
           {/* ── Campos ─────────────────────────────────────────── */}
-          <TabsContent value="fields" className="space-y-10">
+          <TabsContent value="fields">
             <FormBuilder
               fields={formData.fields || []}
               onChange={(fields) => set("fields", fields)}
@@ -378,42 +380,42 @@ export default function FormEditorPage({ params }: { params: Promise<{ id: strin
       {/* Footer */}
       <div className="fixed bottom-10 left-0 right-0 z-50 px-4 sm:px-8 pointer-events-none lg:left-[var(--sidebar-width)] group-data-[state=collapsed]/sidebar-wrapper:lg:left-[var(--sidebar-width-icon)]">
         <div className="max-w-[1000px] mx-auto w-full pointer-events-auto">
-          <div className="bg-white/90 backdrop-blur-3xl border border-zinc-100 p-8 rounded-2xl shadow-2xl flex items-center justify-between animate-in slide-in-from-bottom-8 duration-700">
-            <div className="flex items-center gap-6 pl-4">
+          <div className="bg-white/90 backdrop-blur-3xl border border-zinc-100 p-4 sm:p-8 rounded-2xl shadow-2xl flex items-center justify-between gap-3 animate-in slide-in-from-bottom-8 duration-700">
+            <div className="flex items-center gap-3 sm:gap-6 sm:pl-4 min-w-0">
               <div
-                className={`size-3 rounded-full ${formData.status === "active"
+                className={`size-2.5 sm:size-3 rounded-full shrink-0 ${formData.status === "active"
                     ? "bg-primary shadow-[0_0_15px_rgba(88,89,71,0.2)]"
                     : "bg-red-400"
                   }`}
               />
-              <div className="flex flex-col text-left">
-                <span className="text-[10px] font-medium uppercase tracking-widest text-zinc-900 font-ui">
-                  {formData.title || "Formulário sem título"}
+              <div className="flex flex-col text-left min-w-0">
+                <span className="text-[10px] font-medium uppercase tracking-widest text-zinc-900 font-ui truncate">
+                  {formData.title || "Sem título"}
                 </span>
-                <span className="text-[9px] text-zinc-400 uppercase tracking-widest">
+                <span className="text-[9px] text-zinc-400 uppercase tracking-widest hidden sm:block">
                   {formData.status === "active" ? "Captura Ativa" : "Fluxo Pausado"}
                   {formData.slug ? ` · /form/${formData.slug}` : ""}
                 </span>
               </div>
             </div>
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2 sm:gap-4 shrink-0">
               <Button
                 variant="ghost"
                 type="button"
                 onClick={() => router.push("/admin/forms")}
-                className="h-14 px-8 rounded-lg text-[10px] font-bold uppercase tracking-widest text-zinc-400 hover:text-zinc-900"
+                className="h-10 sm:h-14 px-4 sm:px-8 rounded-lg text-[10px] font-bold uppercase tracking-widest text-zinc-400 hover:text-zinc-900 hidden sm:flex"
               >
                 Abortar
               </Button>
               <Button
                 variant="premium"
-                size="xl"
                 type="button"
                 onClick={handleSave}
-                className="px-12 h-16 rounded-xl gap-4"
+                className="px-6 sm:px-12 h-11 sm:h-16 rounded-xl gap-2 sm:gap-4"
               >
-                <Save className="size-5" />
-                Finalizar Configuração
+                <Save className="size-4 sm:size-5" />
+                <span className="hidden sm:inline">Finalizar Configuração</span>
+                <span className="sm:hidden">Salvar</span>
               </Button>
             </div>
           </div>
