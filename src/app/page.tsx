@@ -108,6 +108,8 @@ export default function Page() {
   };
 
   const hero = previewData?.hero ?? (hasInitiallyLoaded && heroSettings?.value ? heroSettings.value : defaultHero);
+  const heroBgStorageId: string | undefined = hero?.heroBgStorageId;
+  const heroBgUploadedUrl = useQuery(api.files.getImageUrl, heroBgStorageId ? { storageId: heroBgStorageId } : "skip");
   const bigNumbers = previewData?.bigNumbers ?? (hasInitiallyLoaded && bigNumbersSettings?.value ? bigNumbersSettings.value : defaultBigNumbers);
   const about = previewData?.about ?? (hasInitiallyLoaded && aboutSettings?.value ? aboutSettings.value : defaultAbout);
   const services = previewData?.services ?? (hasInitiallyLoaded && servicesSettings?.value ? servicesSettings.value : defaultServices);
@@ -260,6 +262,7 @@ export default function Page() {
       const heroSection = document.querySelector('.hero');
       if (heroSection) {
         document.addEventListener('mousemove', e => {
+          if (window.innerWidth < 768) return;
           const rect = heroSection.getBoundingClientRect();
           if (e.clientY < rect.top || e.clientY > rect.bottom) return;
 
@@ -512,7 +515,7 @@ export default function Page() {
 
         {/*  Right image  */}
         <div className="hero-image reveal d2" data-parallax="-2">
-          <div className="hero-image-bg" style={{"backgroundImage":"url('assets/images/hero-bg.png')"}}></div>
+          <div className="hero-image-bg" style={{"backgroundImage":`url('${heroBgUploadedUrl || "assets/images/hero-bg.png"}')`}}></div>
           <img className="hero-photo" src="assets/images/architect-hero.png" alt="Jarline Vieira" />
         </div>
 

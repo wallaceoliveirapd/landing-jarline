@@ -11,9 +11,15 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { useState, useEffect, useRef } from "react";
-import { Save, Plus, Trash2, Layout, MessageSquare, MapPin, Phone, Mail, Instagram, ExternalLink, Eye, EyeOff, Type, Image as ImageIcon, Link as LinkIcon, Globe } from "lucide-react";
+import { Save, Plus, Trash2, Layout, MessageSquare, MapPin, Phone, Mail, Instagram, ExternalLink, Eye, EyeOff, Type, Image as ImageIcon, Link as LinkIcon, Globe, Loader2, RotateCcw } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
 import { LinkAutocomplete } from "@/components/admin/link-autocomplete";
+
+function HeroBgPreview({ storageId }: { storageId: string }) {
+  const url = useQuery(api.files.getImageUrl, { storageId });
+  if (!url) return <div className="w-full h-full bg-zinc-200 animate-pulse" />;
+  return <img src={url} alt="Hero BG" className="w-full h-full object-cover" />;
+}
 
 export default function HomeManagementPage() {
   const heroSettings = useQuery(api.settings.getSetting, { key: "hero" });
@@ -151,6 +157,33 @@ export default function HomeManagementPage() {
     if (footerSettings?.value) setFooterData(footerSettings.value);
   }, [footerSettings]);
 
+  const generateUploadUrl = useMutation(api.files.generateUploadUrl);
+  const [isUploadingHeroBg, setIsUploadingHeroBg] = useState(false);
+  const heroBgInputRef = useRef<HTMLInputElement>(null);
+
+  const handleHeroBgUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setIsUploadingHeroBg(true);
+    try {
+      const uploadUrl = await generateUploadUrl();
+      const result = await fetch(uploadUrl, {
+        method: "POST",
+        headers: { "Content-Type": file.type },
+        body: file,
+      });
+      if (!result.ok) throw new Error("Upload failed");
+      const { storageId } = await result.json();
+      setHeroData((prev: any) => ({ ...prev, heroBgStorageId: storageId }));
+      toast.success("Imagem enviada! Clique em Salvar Hero para aplicar.");
+    } catch {
+      toast.error("Erro ao enviar imagem.");
+    } finally {
+      setIsUploadingHeroBg(false);
+      if (heroBgInputRef.current) heroBgInputRef.current.value = "";
+    }
+  };
+
   const iframeRef = useRef<HTMLIFrameElement>(null);
 
   useEffect(() => {
@@ -244,6 +277,49 @@ export default function HomeManagementPage() {
                   <div className="space-y-4">
                     <Input value={heroData.ctaSecondary.text} onChange={(e) => setHeroData({ ...heroData, ctaSecondary: { ...heroData.ctaSecondary, text: e.target.value } })} placeholder="Texto" className="bg-white" />
                     <LinkAutocomplete value={heroData.ctaSecondary.link} onChange={(val) => setHeroData({ ...heroData, ctaSecondary: { ...heroData.ctaSecondary, link: val } })} placeholder="Link" className="bg-white" />
+                  </div>
+                </div>
+              </div>
+
+              {/* Hero Background Image */}
+              <div className="border-t border-zinc-50 pt-8 space-y-4">
+                <Label className="text-[10px] font-bold uppercase tracking-widest text-zinc-400">Imagem de Fundo do Hero</Label>
+                <div className="flex items-center gap-6">
+                  <div className="w-36 h-24 rounded-xl overflow-hidden bg-zinc-100 border border-zinc-200 shrink-0">
+                    {heroData.heroBgStorageId
+                      ? <HeroBgPreview storageId={heroData.heroBgStorageId} />
+                      : <img src="/assets/images/hero-bg.png" alt="Hero BG padrão" className="w-full h-full object-cover" />
+                    }
+                  </div>
+                  <div className="flex flex-col gap-2">
+                    <input
+                      ref={heroBgInputRef}
+                      type="file"
+                      accept="image/*"
+                      className="hidden"
+                      onChange={handleHeroBgUpload}
+                    />
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => heroBgInputRef.current?.click()}
+                      disabled={isUploadingHeroBg}
+                      className="gap-2"
+                    >
+                      {isUploadingHeroBg ? <Loader2 className="size-4 animate-spin" /> : <ImageIcon className="size-4" />}
+                      {isUploadingHeroBg ? "Enviando..." : "Trocar imagem"}
+                    </Button>
+                    {heroData.heroBgStorageId && (
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="gap-2 text-zinc-400 hover:text-zinc-600"
+                        onClick={() => setHeroData((prev: any) => ({ ...prev, heroBgStorageId: undefined }))}
+                      >
+                        <RotateCcw className="size-3" /> Usar imagem padrão
+                      </Button>
+                    )}
+                    <p className="text-[11px] text-zinc-400">Sem upload usa hero-bg.png como padrão</p>
                   </div>
                 </div>
               </div>

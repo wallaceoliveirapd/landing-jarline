@@ -1513,7 +1513,11 @@
       }
 
       .hero-image:hover .hero-photo {
-        transform: translateX(-50%) scale(1.02);
+        transform: translateX(-50%);
+      }
+
+      .hero-image:hover .hero-image-bg {
+        transform: scale(1);
       }
 
       /* Stats */
