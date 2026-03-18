@@ -1,8 +1,29 @@
 import { EmailBaseTemplate } from "./base-email";
 
+type FormField = {
+  id: string;
+  type: string;
+  label: string;
+  placeholder?: string;
+  helpText?: string;
+  required: boolean;
+  defaultValue?: string;
+  mask?: string;
+  width?: string;
+  options?: { value: string; label: string }[];
+  validation?: {
+    minLength?: number;
+    maxLength?: number;
+    pattern?: string;
+  };
+  order: number;
+  visible: boolean;
+};
+
 export async function formatFormDataForEmail(
   formTitle: string,
-  formData: Record<string, any>,
+  formData: Record<string, unknown>,
+  fields: FormField[] = [],
   submissionDate?: Date
 ): Promise<string> {
   const date = submissionDate || new Date();
@@ -14,14 +35,19 @@ export async function formatFormDataForEmail(
     minute: "2-digit",
   });
 
-  const formatFieldValue = (value: any): string => {
+  const fieldLabelMap = new Map(fields.map(f => [f.id, f.label]));
+
+  const formatFieldValue = (value: unknown): string => {
     if (value === undefined || value === null || value === "") return "—";
     if (Array.isArray(value)) return value.join(", ");
     if (typeof value === "boolean") return value ? "Sim" : "Não";
     return String(value);
   };
 
-  const formatLabel = (key: string): string => {
+  const getLabel = (key: string): string => {
+    if (fieldLabelMap.has(key)) {
+      return fieldLabelMap.get(key)!;
+    }
     return key
       .replace(/([A-Z])/g, " $1")
       .replace(/_/g, " ")
@@ -34,7 +60,7 @@ export async function formatFormDataForEmail(
     .map(([key, value]) => `
       <tr>
         <td style="padding: 12px 0; border-bottom: 1px solid rgba(88, 89, 71, 0.1);">
-          <p style="font-size: 11px; color: #8a8a80; text-transform: uppercase; letter-spacing: 1px; margin: 0 0 4px;">${formatLabel(key)}</p>
+          <p style="font-size: 11px; color: #8a8a80; text-transform: uppercase; letter-spacing: 1px; margin: 0 0 4px;">${getLabel(key)}</p>
           <p style="font-size: 15px; color: #585947; margin: 0; line-height: 1.5;">${formatFieldValue(value)}</p>
         </td>
       </tr>
