@@ -1822,4 +1822,9 @@
   html {
     @apply font-sans;
       }
-}
+  }
+
+    /* ─── UTILITY ─────────────────────────────────────────── */
+    .preserve-whitespace {
+      white-space: pre-line;
+    }

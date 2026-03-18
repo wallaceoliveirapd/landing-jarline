@@ -501,7 +501,7 @@ export default function Page() {
           <div className="hero-text">
             <p className="hero-eyebrow reveal d1">{hero.caption}</p>
             <h1 className="hero-headline reveal d2">{formatHeroTitle(hero.title)}</h1>
-            <p className="hero-body reveal d3">{hero.subtitle}</p>
+            <p className="hero-body reveal d3 preserve-whitespace">{hero.subtitle}</p>
           </div>
           <div className="hero-actions reveal d4">
             {hero.ctaPrimary?.isEnabled !== false && <a href={hero.ctaPrimary?.link || "#projetos"} className="btn btn-cream">{hero.ctaPrimary?.text || "Ver projetos"}</a>}
@@ -546,10 +546,10 @@ export default function Page() {
     <div className="container">
       <div className="about-inner">
         <div className="about-text">
-          <p className="about-intro reveal-l">{about.subtitle}</p>
+          <p className="about-intro reveal-l preserve-whitespace">{about.subtitle}</p>
           <h2 className="about-name reveal-l d1">{about.title}</h2>
           <div className="about-bio reveal d2">
-            <p>{about.description}</p>
+            <p className="preserve-whitespace">{about.description}</p>
           </div>
         </div>
         <div className="about-image-wrap reveal-r">
@@ -634,7 +634,7 @@ export default function Page() {
           <div className={`service-card reveal d${(i % 3) + 1}`} key={i}>
             <p className="service-num">{service.num || `0${i + 1}`}</p>
             <h3 className="service-title">{service.title}</h3>
-            <p className="service-desc">{service.description}</p>
+            <p className="service-desc preserve-whitespace">{service.description}</p>
           </div>
         ))}
       </div>
@@ -654,7 +654,7 @@ export default function Page() {
     <div className="container">
       <div className="ai-header">
         <h2 className="ai-title reveal">{aiSection.title}</h2>
-        <p className="ai-subtitle reveal d1">{aiSection.subtitle}</p>
+        <p className="ai-subtitle reveal d1 preserve-whitespace">{aiSection.subtitle}</p>
       </div>
       <div className="ai-card reveal d2">
         <div className="ai-agent-row">
