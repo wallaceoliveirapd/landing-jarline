@@ -60,6 +60,7 @@ export default function AdminLoginPage() {
         throw new Error(data.error || "Erro ao fazer login");
       }
 
+      sessionStorage.setItem("sessionId", data.sessionId);
       toast.success("Login realizado com sucesso!");
       router.push("/admin");
     } catch (error: any) {
