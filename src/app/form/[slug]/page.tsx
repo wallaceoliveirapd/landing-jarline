@@ -670,28 +670,51 @@ export default function PublicFormPage({ params }: { params: Promise<{ slug: str
 
       const formTitle = form.displayTitle || form.title;
 
+      console.log("Form settings:", {
+        sendEmail: form.sendEmail,
+        notifyAllAdmins: form.notifyAllAdmins,
+        targetEmail: form.targetEmail,
+        hasAdmins: admins?.length || 0,
+      });
+
       // Send email notification
       if (form.sendEmail) {
         try {
-          const { sendFormSubmissionNotificationToAdmins, sendEmail } = await import("@/lib/email");
+          // Default to notifyAllAdmins=true if not set
+          const shouldNotifyAll = form.notifyAllAdmins !== false;
           
-          if (form.notifyAllAdmins && admins && admins.length > 0) {
-            // Send to all admins
-            await sendFormSubmissionNotificationToAdmins(
-              formTitle,
-              values,
-              admins.map((admin: any) => ({ email: admin.email, name: admin.name }))
-            );
-            console.log("Email sent to all admins");
-          } else if (form.targetEmail) {
-            // Send to specific email
-            await sendEmail({
-              to: [{ email: form.targetEmail }],
-              subject: `Nova submissão: ${formTitle}`,
-              htmlContent: `Você recebeu uma nova submissão do formulário "${formTitle}".`,
-              tags: ["form-submission", "notification"],
+          if (shouldNotifyAll && admins && admins.length > 0) {
+            const { formatFormDataForEmail } = await import("@/emails/form-notification");
+            const htmlContent = await formatFormDataForEmail(formTitle, values);
+            
+            const response = await fetch("/api/email", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                to: admins.map((admin: any) => ({ email: admin.email, name: admin.name })),
+                subject: `Nova submissão: ${formTitle}`,
+                htmlContent,
+                tags: ["form-submission", "notification", "admin"],
+              }),
             });
-            console.log("Email sent to specific email:", form.targetEmail);
+            const result = await response.json();
+            console.log("Email sent to all admins:", result);
+          } else if (form.targetEmail) {
+            const { formatFormDataForEmail } = await import("@/emails/form-notification");
+            const htmlContent = await formatFormDataForEmail(formTitle, values);
+            
+            const response = await fetch("/api/email", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                to: [{ email: form.targetEmail }],
+                subject: `Nova submissão: ${formTitle}`,
+                htmlContent,
+                tags: ["form-submission", "notification"],
+              }),
+            });
+            const result = await response.json();
+            console.log("Email sent to specific email:", result);
           }
         } catch (emailError) {
           console.error("Erro ao enviar email de notificação:", emailError);
@@ -705,9 +728,21 @@ export default function PublicFormPage({ params }: { params: Promise<{ slug: str
 
       if (emailField && values[emailField.id]) {
         try {
-          const { sendFormConfirmationToUser } = await import("@/lib/email");
-          await sendFormConfirmationToUser(values[emailField.id], formTitle);
-          console.log("Confirmation email sent to user");
+          const { formatConfirmationForEmail } = await import("@/emails/form-confirmation");
+          const htmlContent = await formatConfirmationForEmail(formTitle);
+          
+          const response = await fetch("/api/email", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              to: [{ email: values[emailField.id] }],
+              subject: `Mensagem enviada - ${formTitle}`,
+              htmlContent,
+              tags: ["form-submission", "confirmation", "user"],
+            }),
+          });
+          const result = await response.json();
+          console.log("Confirmation email sent to user:", result);
         } catch (emailError) {
           console.error("Erro ao enviar email de confirmação:", emailError);
         }

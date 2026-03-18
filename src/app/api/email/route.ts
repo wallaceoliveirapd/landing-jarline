@@ -69,16 +69,20 @@ export async function POST(request: NextRequest) {
       }),
     });
 
+    console.log("Brevo API Response Status:", response.status);
+    console.log("Brevo API Response Headers:", Object.fromEntries(response.headers.entries()));
+    
+    const responseText = await response.text();
+    console.log("Brevo API Response Body:", responseText);
+
     if (!response.ok) {
-      const errorData = await response.json();
-      console.error("Erro ao enviar email via Brevo:", errorData);
       return NextResponse.json(
-        { success: false, error: errorData.message || "Erro desconhecido" },
+        { success: false, error: responseText, status: response.status },
         { status: response.status }
       );
     }
 
-    const data = await response.json();
+    const data = JSON.parse(responseText);
     return NextResponse.json({ success: true, messageId: data.messageId });
   } catch (error) {
     console.error("Exceção ao enviar email:", error);

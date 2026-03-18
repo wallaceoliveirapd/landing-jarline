@@ -100,7 +100,7 @@ export default defineSchema({
     description: v.optional(v.string()),
     successMessage: v.optional(v.string()),
     targetEmail: v.optional(v.string()),
-    notifyAllAdmins: v.boolean(), // Enviar para todos os admins
+    notifyAllAdmins: v.optional(v.boolean()), // Enviar para todos os admins (default: true)
     redirectUrl: v.optional(v.string()),
     sendEmail: v.boolean(),
     sendWhatsApp: v.boolean(),
