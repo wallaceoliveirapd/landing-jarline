@@ -39,7 +39,7 @@ export const getSubmissionsWithForms = query({
         _id: sub._id,
         formId: sub.formId,
         status: sub.status,
-        createdAt: sub.createdAt,
+        createdAt: sub.createdAt ?? sub._creationTime,
         formTitle,
         formFields,
         data: sub.data,

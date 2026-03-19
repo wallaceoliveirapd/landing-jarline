@@ -11,7 +11,9 @@ import { cn } from "@/lib/utils";
 import ConvexClientProvider from "@/components/ConvexClientProvider";
 import { Toaster } from "@/components/ui/sonner";
 
-const geist = Geist({subsets:['latin'],variable:'--font-sans'});
+const geist = Geist({ subsets: ['latin'], variable: '--font-sans' });
+import { Analytics } from "@vercel/analytics/next"
+import { SpeedInsights } from "@vercel/speed-insights/next"
 
 const spaceGrotesk = Space_Grotesk({
   subsets: ['latin'],
@@ -76,6 +78,8 @@ export default function RootLayout({
       <body className="antialiased font-sans">
         <ConvexClientProvider>
           {children}
+          <Analytics />
+          <SpeedInsights />
         </ConvexClientProvider>
         <Toaster position="top-right" richColors />
       </body>

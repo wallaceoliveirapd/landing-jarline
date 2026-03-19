@@ -241,7 +241,7 @@ export default function SubmissionsPage() {
           <span className="text-[10px] font-medium uppercase tracking-widest text-zinc-400 font-ui mb-2 block">Novos Hoje</span>
           <div className="flex items-end justify-between">
             <p className="text-2xl sm:text-4xl font-medium font-ui text-zinc-900">
-              {submissions?.filter((s) => new Date(s.createdAt).toDateString() === new Date().toDateString()).length || 0}
+              {submissions?.filter((s) => new Date(s.createdAt ?? 0).toDateString() === new Date().toDateString()).length || 0}
             </p>
             <Clock className="size-6 sm:size-8 text-zinc-100 group-hover:text-zinc-200 transition-colors" />
           </div>
@@ -324,7 +324,7 @@ export default function SubmissionsPage() {
                   <div className="flex items-center gap-2 mt-2">
                     {getStatusBadge(sub.status)}
                     <span className="text-[10px] text-zinc-400">
-                      {format(new Date(sub.createdAt), "dd MMM, HH:mm", { locale: ptBR })}
+                      {format(new Date(sub.createdAt ?? Date.now()), "dd MMM, HH:mm", { locale: ptBR })}
                     </span>
                   </div>
                   <p className="text-[10px] text-zinc-400 mt-1 font-medium uppercase tracking-wide truncate">
@@ -401,10 +401,10 @@ export default function SubmissionsPage() {
                   <TableCell className="text-center">
                     <div className="flex flex-col items-center">
                       <span className="text-[11px] font-medium text-zinc-900">
-                        {format(new Date(sub.createdAt), "dd MMM", { locale: ptBR })}
+                        {format(new Date(sub.createdAt ?? Date.now()), "dd MMM", { locale: ptBR })}
                       </span>
                       <span className="text-[9px] text-zinc-400 uppercase tracking-widest leading-none mt-1 font-ui">
-                        {format(new Date(sub.createdAt), "HH:mm")}
+                        {format(new Date(sub.createdAt ?? Date.now()), "HH:mm")}
                       </span>
                     </div>
                   </TableCell>
@@ -472,7 +472,7 @@ export default function SubmissionsPage() {
               <div className="p-4 bg-zinc-50 rounded-xl border border-zinc-100 text-xs text-zinc-400 space-y-1">
                 <p>
                   <span className="uppercase tracking-widest font-bold">Data: </span>
-                  {format(new Date(selectedSubmission.createdAt), "dd 'de' MMMM 'de' yyyy 'às' HH:mm", { locale: ptBR })}
+                  {format(new Date(selectedSubmission.createdAt ?? Date.now()), "dd 'de' MMMM 'de' yyyy 'às' HH:mm", { locale: ptBR })}
                 </p>
                 <p>
                   <span className="uppercase tracking-widest font-bold">Status: </span>
