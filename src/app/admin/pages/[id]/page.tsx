@@ -28,6 +28,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useRouter } from "next/navigation";
 import { ImageUpload } from "@/components/admin/image-upload";
 import { RichTextEditor } from "@/components/admin/rich-text-editor";
+import Link from "next/link";
 
 export default function InstitutionalPageEditor({ params }: { params: Promise<{ id: string }> }) {
   const router = useRouter();
@@ -149,11 +150,11 @@ export default function InstitutionalPageEditor({ params }: { params: Promise<{ 
                   required
                 />
               </div>
-              <div className="space-y-4">
+              <div className="space-y-4 col-span-2">
                 <Label className="text-[10px] font-medium uppercase tracking-[0.2em] text-zinc-400">Caminho da URL (Slug)</Label>
                 <div className="flex items-center gap-3 group">
                   <div className="bg-zinc-100 px-6 h-14 rounded-2xl flex items-center text-zinc-400 text-xs font-medium border border-transparent group-focus-within:border-zinc-200 transition-all">
-                    jarlinevieira.com.br/
+                    jarlinevieira.com.br/page/
                   </div>
                   <Input
                     value={formData.slug}
@@ -169,20 +170,31 @@ export default function InstitutionalPageEditor({ params }: { params: Promise<{ 
                     <Button
                       type="button"
                       onClick={() => setIsSlugManual(false)}
-                      variant="ghost"
-                      className="h-14 px-4 rounded-2xl text-[9px] uppercase font-medium tracking-wider text-zinc-400 font-ui"
+                      variant="outline"
+                      className="h-14 px-4 text-zinc-500"
                     >
                       Resetar
                     </Button>
                   )}
+                  <Link href={`/page/${formData.slug}`} target="_blank">
+                    <Button
+                      type="button"
+                      onClick={() => setIsSlugManual(false)}
+                      variant="default"
+                      className="h-14 px-4 "
+                    >
+                      Ver página
+                    </Button>
+                  </Link>
                 </div>
               </div>
-              <div className="space-y-4">
+              <div className="space-y-4 col-span-2">
                 <ImageUpload
                   label="Imagem de Capa"
                   description="Imagem principal que aparece no topo da página institucional."
                   value={formData.coverImage}
                   onChange={(storageId) => setFormData({ ...formData, coverImage: storageId })}
+                  aspectRatio="landscape"
                 />
               </div>
             </div>

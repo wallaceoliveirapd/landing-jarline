@@ -29,6 +29,14 @@ import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
 import { useRouter } from "next/navigation";
 
+function ProjectCoverImg({ storageId, title }: { storageId: string; title: string }) {
+  const isId = storageId && !storageId.startsWith("http");
+  const url = useQuery(api.files.getImageUrl, isId ? { storageId } : "skip");
+  const src = isId ? url : storageId;
+  if (!src) return <ImageIconLucide className="size-5 text-zinc-300 m-auto mt-3.5" />;
+  return <img src={src} className="size-full object-cover" alt={title} />;
+}
+
 export default function ProjectsManagementPage() {
   const router = useRouter();
   const projects = useQuery(api.projects.getProjects);
@@ -124,7 +132,7 @@ export default function ProjectsManagementPage() {
             <div className="flex items-center gap-3 min-w-0">
               <div className="shrink-0 size-12 rounded-xl bg-zinc-50 border border-zinc-100 overflow-hidden">
                 {project.coverImage
-                  ? <img src={project.coverImage} className="size-full object-cover" alt={project.title} />
+                  ? <ProjectCoverImg storageId={project.coverImage} title={project.title} />
                   : <ImageIconLucide className="size-5 text-zinc-300 m-auto mt-3.5" />
                 }
               </div>
@@ -193,7 +201,7 @@ export default function ProjectsManagementPage() {
                     <div className="flex items-center gap-6">
                       <div className="size-16 rounded-2xl bg-zinc-50 border border-zinc-100 flex items-center justify-center text-zinc-300 overflow-hidden shrink-0 group-hover:scale-105 transition-transform duration-500 shadow-sm">
                         {project.coverImage ? (
-                          <img src={project.coverImage} className="size-full object-cover" alt={project.title} />
+                          <ProjectCoverImg storageId={project.coverImage} title={project.title} />
                         ) : (
                           <ImageIconLucide className="size-6" />
                         )}

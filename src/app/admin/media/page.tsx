@@ -7,26 +7,145 @@ import { useQuery, useMutation } from "convex/react";
 import { api } from "../../../../convex/_generated/api";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { 
-  Plus, 
-  Search, 
-  Image as ImageIcon, 
-  Grid2X2, 
-  List, 
-  Trash2, 
-  Download, 
+import {
+  Plus,
+  Search,
+  Image as ImageIcon,
+  Grid2X2,
+  List,
+  Trash2,
   Eye,
   Maximize2,
   FileCode,
   FileText,
   Loader2,
-  X,
-  Check
 } from "lucide-react";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
+
+// ─── Resolve storageId to URL via Convex ─────────────────────────────────────
+
+function MediaImg({ storageId, alt, className }: { storageId: string; alt?: string; className?: string }) {
+  const url = useQuery(api.files.getImageUrl, storageId ? { storageId } : "skip");
+  if (!url) return <div className={`${className} bg-zinc-100 animate-pulse`} />;
+  // eslint-disable-next-line @next/next/no-img-element
+  return <img src={url} alt={alt || ""} className={className} />;
+}
+
+// ─── Grid card ────────────────────────────────────────────────────────────────
+
+function MediaGridCard({
+  item,
+  onPreview,
+  onDelete,
+}: {
+  item: any;
+  onPreview: () => void;
+  onDelete: () => void;
+}) {
+  const getFileIcon = (type: string) => {
+    switch (type) {
+      case "image": return <ImageIcon className="size-12 text-zinc-900" />;
+      case "video": return <FileCode className="size-12 text-zinc-900" />;
+      default: return <FileText className="size-12 text-zinc-900" />;
+    }
+  };
+
+  const formatFileSize = (bytes: number) => {
+    if (!bytes) return "—";
+    const k = 1024;
+    const sizes = ["B", "KB", "MB", "GB"];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + " " + sizes[i];
+  };
+
+  return (
+    <div
+      className="group relative aspect-square rounded-2xl bg-zinc-50 border border-zinc-100 overflow-hidden hover:border-zinc-200 transition-all cursor-pointer"
+      onClick={onPreview}
+    >
+      {item.type === "image" ? (
+        <MediaImg
+          storageId={item.storageId}
+          alt={item.alt || item.filename}
+          className="absolute inset-0 w-full h-full object-cover"
+        />
+      ) : (
+        <div className="absolute inset-0 flex items-center justify-center opacity-20 group-hover:scale-110 transition-transform duration-500">
+          {getFileIcon(item.type)}
+        </div>
+      )}
+
+      <div className="absolute inset-x-0 bottom-0 p-4 bg-white/90 backdrop-blur-sm border-t border-zinc-100 translate-y-full group-hover:translate-y-0 transition-transform duration-300">
+        <p className="text-[10px] font-bold text-zinc-900 truncate mb-1">{item.filename}</p>
+        <div className="flex items-center justify-between">
+          <span className="text-[9px] text-zinc-400 uppercase tracking-widest font-medium">{formatFileSize(item.size)}</span>
+          <div className="flex gap-1">
+            <button onClick={(e) => { e.stopPropagation(); onPreview(); }} className="p-1 text-zinc-400 hover:text-zinc-900">
+              <Eye className="size-3" />
+            </button>
+            <button onClick={(e) => { e.stopPropagation(); onDelete(); }} className="p-1 text-zinc-400 hover:text-red-500">
+              <Trash2 className="size-3" />
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <button
+        onClick={(e) => { e.stopPropagation(); onPreview(); }}
+        className="absolute top-4 right-4 size-8 rounded-full bg-white/80 backdrop-blur-md border border-zinc-100 flex items-center justify-center text-zinc-400 opacity-0 group-hover:opacity-100 transition-opacity hover:text-zinc-900"
+      >
+        <Maximize2 className="size-3" />
+      </button>
+    </div>
+  );
+}
+
+// ─── List row thumbnail ───────────────────────────────────────────────────────
+
+function MediaListThumb({ item }: { item: any }) {
+  const getFileIcon = (type: string) => {
+    switch (type) {
+      case "image": return <ImageIcon className="size-5 text-zinc-300" />;
+      case "video": return <FileCode className="size-5 text-zinc-300" />;
+      default: return <FileText className="size-5 text-zinc-300" />;
+    }
+  };
+
+  if (item.type !== "image") {
+    return (
+      <div className="size-10 rounded-lg bg-zinc-50 flex items-center justify-center shrink-0">
+        {getFileIcon(item.type)}
+      </div>
+    );
+  }
+
+  return (
+    <div className="size-10 rounded-lg bg-zinc-50 overflow-hidden shrink-0">
+      <MediaImg storageId={item.storageId} alt={item.alt || item.filename} className="w-full h-full object-cover" />
+    </div>
+  );
+}
+
+// ─── Preview dialog image ─────────────────────────────────────────────────────
+
+function MediaPreviewImg({ item }: { item: any }) {
+  const url = useQuery(api.files.getImageUrl, item?.storageId ? { storageId: item.storageId } : "skip");
+
+  if (!url) {
+    return (
+      <div className="w-full h-48 flex items-center justify-center">
+        <Loader2 className="size-8 animate-spin text-zinc-300" />
+      </div>
+    );
+  }
+
+  // eslint-disable-next-line @next/next/no-img-element
+  return <img src={url} alt={item.alt || item.filename} className="max-w-full max-h-[60vh] object-contain rounded-lg" />;
+}
+
+// ─── Main page ────────────────────────────────────────────────────────────────
 
 export default function MediaLibraryPage() {
   const mediaItems = useQuery(api.media.getMedia);
@@ -38,15 +157,15 @@ export default function MediaLibraryPage() {
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [filterType, setFilterType] = useState("all");
   const [isUploading, setIsUploading] = useState(false);
-  const [selectedItem, setSelectedItem] = useState<any>(null);
   const [previewItem, setPreviewItem] = useState<any>(null);
-  const [editItem, setEditItem] = useState<any>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const filteredItems = mediaItems?.filter((item: any) => {
-    const matchesSearch = item.filename.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    const matchesSearch =
+      item.filename.toLowerCase().includes(searchTerm.toLowerCase()) ||
       item.alt?.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesType = filterType === "all" || 
+    const matchesType =
+      filterType === "all" ||
       (filterType === "images" && item.type === "image") ||
       (filterType === "videos" && item.type === "video") ||
       (filterType === "docs" && (item.type === "document" || item.type === "archive"));
@@ -65,21 +184,15 @@ export default function MediaLibraryPage() {
       for (const file of Array.from(files)) {
         try {
           const uploadUrl = await generateUploadUrl({});
-          
           const response = await fetch(uploadUrl, {
             method: "POST",
             headers: { "Content-Type": file.type },
             body: file,
           });
-
-          if (!response.ok) {
-            throw new Error("Upload failed");
-          }
+          if (!response.ok) throw new Error("Upload failed");
 
           const { storageId } = await response.json();
-          
-          const fileType = file.type.startsWith("image/") ? "image" : 
-                         file.type.startsWith("video/") ? "video" : "document";
+          const fileType = file.type.startsWith("image/") ? "image" : file.type.startsWith("video/") ? "video" : "document";
 
           await addMedia({
             filename: file.name,
@@ -93,44 +206,35 @@ export default function MediaLibraryPage() {
             folder: "uploads",
             tags: [],
           });
-
           uploadedCount++;
-        } catch (err) {
-          console.error("Error uploading file:", err);
+        } catch {
           errorCount++;
         }
       }
 
-      if (uploadedCount > 0) {
-        toast.success(`${uploadedCount} arquivo(s) enviado(s) com sucesso`);
-      }
-      if (errorCount > 0) {
-        toast.error(`${errorCount} erro(s) ao enviar arquivo(s)`);
-      }
-    } catch (error) {
+      if (uploadedCount > 0) toast.success(`${uploadedCount} arquivo(s) enviado(s) com sucesso`);
+      if (errorCount > 0) toast.error(`${errorCount} erro(s) ao enviar arquivo(s)`);
+    } catch {
       toast.error("Erro ao fazer upload");
     } finally {
       setIsUploading(false);
-      if (fileInputRef.current) {
-        fileInputRef.current.value = "";
-      }
+      if (fileInputRef.current) fileInputRef.current.value = "";
     }
   };
 
   const handleDelete = async (item: any) => {
     if (!confirm(`Tem certeza que deseja excluir "${item.filename}"?`)) return;
-    
     try {
       await deleteMedia({ id: item._id });
       toast.success("Arquivo excluído");
-      setSelectedItem(null);
-    } catch (error) {
+      setPreviewItem(null);
+    } catch {
       toast.error("Erro ao excluir arquivo");
     }
   };
 
   const formatFileSize = (bytes: number) => {
-    if (bytes === 0) return "0 B";
+    if (!bytes) return "—";
     const k = 1024;
     const sizes = ["B", "KB", "MB", "GB"];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
@@ -158,32 +262,9 @@ export default function MediaLibraryPage() {
         </div>
 
         <div className="w-full sm:w-auto">
-          <input
-            ref={fileInputRef}
-            type="file"
-            multiple
-            accept="image/*,video/*,.pdf,.doc,.docx"
-            onChange={handleUpload}
-            className="hidden"
-          />
-          <Button
-            variant="premium"
-            size="lg"
-            className="whitespace-nowrap w-full sm:w-auto"
-            onClick={() => fileInputRef.current?.click()}
-            disabled={isUploading}
-          >
-            {isUploading ? (
-              <>
-                <Loader2 className="size-5 animate-spin mr-2" />
-                Enviando...
-              </>
-            ) : (
-              <>
-                <Plus className="size-5" />
-                Fazer Upload
-              </>
-            )}
+          <input ref={fileInputRef} type="file" multiple accept="image/*,video/*,.pdf,.doc,.docx" onChange={handleUpload} className="hidden" />
+          <Button variant="premium" size="lg" className="whitespace-nowrap w-full sm:w-auto" onClick={() => fileInputRef.current?.click()} disabled={isUploading}>
+            {isUploading ? <><Loader2 className="size-5 animate-spin mr-2" />Enviando...</> : <><Plus className="size-5" />Fazer Upload</>}
           </Button>
         </div>
       </div>
@@ -202,27 +283,12 @@ export default function MediaLibraryPage() {
           <div className="flex items-center gap-3 w-full sm:w-auto">
             <div className="relative flex-1 sm:w-64">
               <Search className="absolute left-4 top-1/2 -translate-y-1/2 size-4 text-zinc-300" />
-              <Input 
-                placeholder="Buscar arquivo..." 
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-12"
-              />
+              <Input placeholder="Buscar arquivo..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} className="pl-12" />
             </div>
-            <Button 
-              variant={viewMode === "grid" ? "secondary" : "outline"} 
-              size="icon-lg" 
-              onClick={() => setViewMode("grid")}
-              className={viewMode === "grid" ? "bg-zinc-100" : "text-zinc-400"}
-            >
+            <Button variant={viewMode === "grid" ? "secondary" : "outline"} size="icon-lg" onClick={() => setViewMode("grid")} className={viewMode === "grid" ? "bg-zinc-100" : "text-zinc-400"}>
               <Grid2X2 className="size-4" />
             </Button>
-            <Button 
-              variant={viewMode === "list" ? "secondary" : "outline"} 
-              size="icon-lg" 
-              onClick={() => setViewMode("list")}
-              className={viewMode === "list" ? "bg-zinc-100" : "text-zinc-400"}
-            >
+            <Button variant={viewMode === "list" ? "secondary" : "outline"} size="icon-lg" onClick={() => setViewMode("list")} className={viewMode === "list" ? "bg-zinc-100" : "text-zinc-400"}>
               <List className="size-4" />
             </Button>
           </div>
@@ -241,51 +307,12 @@ export default function MediaLibraryPage() {
         ) : viewMode === "grid" ? (
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-3 sm:gap-6">
             {filteredItems.map((item: any) => (
-              <div 
-                key={item._id} 
-                className="group relative aspect-square rounded-2xl bg-zinc-50 border border-zinc-100 overflow-hidden hover:border-zinc-200 transition-all cursor-pointer"
-                onClick={() => setSelectedItem(item)}
-              >
-                {item.type === "image" && item.url ? (
-                  <img 
-                    src={item.url} 
-                    alt={item.alt || item.filename}
-                    className="absolute inset-0 w-full h-full object-cover"
-                  />
-                ) : (
-                  <div className="absolute inset-0 flex items-center justify-center opacity-20 group-hover:scale-110 transition-transform duration-500">
-                    {getFileIcon(item.type)}
-                  </div>
-                )}
-                
-                <div className="absolute inset-x-0 bottom-0 p-4 bg-white/90 backdrop-blur-sm border-t border-zinc-100 translate-y-full group-hover:translate-y-0 transition-transform duration-300">
-                  <p className="text-[10px] font-bold text-zinc-900 truncate mb-1">{item.filename}</p>
-                  <div className="flex items-center justify-between">
-                    <span className="text-[9px] text-zinc-400 uppercase tracking-widest font-medium">{formatFileSize(item.size)}</span>
-                    <div className="flex gap-1">
-                      <button 
-                        onClick={(e) => { e.stopPropagation(); setPreviewItem(item); }}
-                        className="p-1 text-zinc-400 hover:text-zinc-900"
-                      >
-                        <Eye className="size-3" />
-                      </button>
-                      <button 
-                        onClick={(e) => { e.stopPropagation(); handleDelete(item); }}
-                        className="p-1 text-zinc-400 hover:text-red-500"
-                      >
-                        <Trash2 className="size-3" />
-                      </button>
-                    </div>
-                  </div>
-                </div>
-
-                <button 
-                  onClick={(e) => { e.stopPropagation(); setPreviewItem(item); }}
-                  className="absolute top-4 right-4 size-8 rounded-full bg-white/80 backdrop-blur-md border border-zinc-100 flex items-center justify-center text-zinc-400 opacity-0 group-hover:opacity-100 transition-opacity hover:text-zinc-900"
-                >
-                  <Maximize2 className="size-3" />
-                </button>
-              </div>
+              <MediaGridCard
+                key={item._id}
+                item={item}
+                onPreview={() => setPreviewItem(item)}
+                onDelete={() => handleDelete(item)}
+              />
             ))}
           </div>
         ) : (
@@ -305,13 +332,7 @@ export default function MediaLibraryPage() {
                   <tr key={item._id} className="hover:bg-zinc-50/50 transition-colors">
                     <td className="px-4 sm:px-6 py-4">
                       <div className="flex items-center gap-3">
-                        <div className="size-10 rounded-lg bg-zinc-50 overflow-hidden flex items-center justify-center shrink-0">
-                          {item.type === "image" && item.url ? (
-                            <img src={item.url} alt={item.alt || item.filename} className="w-full h-full object-cover" />
-                          ) : (
-                            getFileIcon(item.type)
-                          )}
-                        </div>
+                        <MediaListThumb item={item} />
                         <span className="text-sm font-medium text-zinc-900 truncate max-w-[140px] sm:max-w-none">{item.filename}</span>
                       </div>
                     </td>
@@ -322,9 +343,7 @@ export default function MediaLibraryPage() {
                       <span className="text-xs text-zinc-500">{formatFileSize(item.size)}</span>
                     </td>
                     <td className="hidden sm:table-cell px-6 py-4">
-                      <span className="text-xs text-zinc-500">
-                        {new Date(item.createdAt).toLocaleDateString("pt-BR")}
-                      </span>
+                      <span className="text-xs text-zinc-500">{new Date(item.createdAt).toLocaleDateString("pt-BR")}</span>
                     </td>
                     <td className="px-4 sm:px-6 py-4 text-right">
                       <div className="flex items-center justify-end gap-2">
@@ -350,13 +369,9 @@ export default function MediaLibraryPage() {
           <DialogHeader className="p-6 pb-0">
             <DialogTitle className="text-lg font-medium">{previewItem?.filename}</DialogTitle>
           </DialogHeader>
-          <div className="p-6 pt-0 flex items-center justify-center bg-zinc-50 min-h-[300px]">
-            {previewItem?.type === "image" && previewItem?.url ? (
-              <img 
-                src={previewItem.url} 
-                alt={previewItem.alt || previewItem.filename}
-                className="max-w-full max-h-[60vh] object-contain rounded-lg"
-              />
+          <div className="p-6 pt-4 flex items-center justify-center bg-zinc-50 min-h-[300px]">
+            {previewItem?.type === "image" ? (
+              <MediaPreviewImg item={previewItem} />
             ) : (
               <div className="text-center">
                 {getFileIcon(previewItem?.type)}
@@ -365,16 +380,11 @@ export default function MediaLibraryPage() {
             )}
           </div>
           <div className="px-6 pb-6 flex justify-between items-center border-t border-zinc-100 pt-4">
-            <div className="text-sm text-zinc-500">
-              {previewItem && formatFileSize(previewItem.size)}
-            </div>
+            <span className="text-sm text-zinc-500">{previewItem && formatFileSize(previewItem.size)}</span>
             <div className="flex gap-2">
-              <Button variant="outline" onClick={() => setPreviewItem(null)}>
-                Fechar
-              </Button>
+              <Button variant="outline" onClick={() => setPreviewItem(null)}>Fechar</Button>
               <Button variant="destructive" onClick={() => { handleDelete(previewItem); setPreviewItem(null); }}>
-                <Trash2 className="size-4 mr-2" />
-                Excluir
+                <Trash2 className="size-4 mr-2" />Excluir
               </Button>
             </div>
           </div>

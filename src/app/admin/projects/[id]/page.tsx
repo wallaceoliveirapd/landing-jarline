@@ -32,6 +32,15 @@ import { useRouter } from "next/navigation";
 import { ImageUpload } from "@/components/admin/image-upload";
 import { GalleryManager } from "@/components/admin/gallery-manager";
 import { RichTextEditor } from "@/components/admin/rich-text-editor";
+import Link from "next/link";
+
+function GalleryThumb({ storageId }: { storageId: string }) {
+  const isId = storageId && !storageId.startsWith("http");
+  const url = useQuery(api.files.getImageUrl, isId ? { storageId } : "skip");
+  const src = isId ? url : storageId;
+  if (!src) return null;
+  return <img src={src} className="size-full object-cover" alt="" />;
+}
 
 export default function ProjectEditorPage({ params }: { params: Promise<{ id: string }> }) {
   const router = useRouter();
@@ -99,7 +108,7 @@ export default function ProjectEditorPage({ params }: { params: Promise<{ id: st
     e.preventDefault();
     try {
       if (!isNew) {
-        const { _id, _creationTime, ...updateData } = formData;
+        const { _id, _creationTime, createdAt, updatedAt, publishedAt, ...updateData } = formData;
         await updateProject({ id: id as any, ...updateData });
         toast.success("Projeto atualizado!");
       } else {
@@ -163,11 +172,11 @@ export default function ProjectEditorPage({ params }: { params: Promise<{ id: st
                   required
                 />
               </div>
-              <div className="space-y-4">
+              <div className="space-y-4 col-span-2">
                 <Label className="text-[10px] font-medium uppercase tracking-[0.2em] text-zinc-400">Caminho da URL (Slug)</Label>
                 <div className="flex items-center gap-3 group">
                   <div className="bg-zinc-100 px-6 h-14 rounded-2xl flex items-center text-zinc-400 text-xs font-medium border border-transparent group-focus-within:border-zinc-200 transition-all">
-                    jarlinevieira.com.br/projetos/
+                    jarlinevieira.com.br/projects/
                   </div>
                   <Input
                     value={formData.slug}
@@ -179,6 +188,13 @@ export default function ProjectEditorPage({ params }: { params: Promise<{ id: st
                     className="font-mono text-sm shadow-none"
                     placeholder="nome-do-projeto"
                   />
+
+                  <Link href={`/projects/${formData.slug}`} target="_blank">
+                    <Button className="h-14">
+                      Ver Projeto
+                    </Button>
+                  </Link>
+
                 </div>
               </div>
               <div className="space-y-4">
@@ -213,7 +229,7 @@ export default function ProjectEditorPage({ params }: { params: Promise<{ id: st
                   <div className="flex -space-x-3">
                     {formData.gallery.slice(0, 3).map((item: any, i: number) => (
                       <div key={i} className="size-10 rounded-full border-2 border-white bg-zinc-100 overflow-hidden shrink-0 shadow-sm relative">
-                        {item.url && <img src={typeof item.url === 'string' ? item.url : (item as any)} className="size-full object-cover" alt="" />}
+                        {item.url && <GalleryThumb storageId={typeof item.url === 'string' ? item.url : String(item.url)} />}
                         {item.isMain && (
                           <div className="absolute inset-0 bg-[#585947]/10 flex items-center justify-center">
                             <div className="size-2 rounded-full bg-[#585947]" />

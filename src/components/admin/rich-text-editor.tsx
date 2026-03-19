@@ -22,6 +22,10 @@ import { TableRow } from "@tiptap/extension-table-row";
 import { TableCell } from "@tiptap/extension-table-cell";
 import { TableHeader } from "@tiptap/extension-table-header";
 import { common, createLowlight } from "lowlight";
+import { useMutation, useConvex } from "convex/react";
+import { api } from "../../../convex/_generated/api";
+import { useRef } from "react";
+import { toast } from "sonner";
 import {
   Bold,
   Italic,
@@ -97,6 +101,10 @@ const highlightColors = [
 ];
 
 export function RichTextEditor({ content, onChange, placeholder = "Escreva o conteúdo aqui..." }: RichTextEditorProps) {
+  const generateUploadUrl = useMutation(api.files.generateUploadUrl);
+  const convex = useConvex();
+  const imageInputRef = useRef<HTMLInputElement>(null);
+
   const editor = useEditor({
     immediatelyRender: false,
     extensions: [
@@ -166,7 +174,7 @@ export function RichTextEditor({ content, onChange, placeholder = "Escreva o con
 
   const setLink = () => {
     if (!editor.state.selection.from) return;
-    
+
     const previousUrl = editor.getAttributes("link").href;
     const url = window.prompt("URL do link", previousUrl);
 
@@ -183,9 +191,37 @@ export function RichTextEditor({ content, onChange, placeholder = "Escreva o con
   };
 
   const addImage = () => {
-    const url = window.prompt("URL da Imagem");
-    if (url) {
-      editor.chain().focus().setImage({ src: url }).run();
+    imageInputRef.current?.click();
+  };
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !editor) return;
+
+    if (file.size > 10 * 1024 * 1024) {
+      toast.error("Arquivo muito grande. Máximo 10MB.");
+      return;
+    }
+
+    try {
+      const postUrl = await generateUploadUrl();
+      const result = await fetch(postUrl, {
+        method: "POST",
+        headers: { "Content-Type": file.type },
+        body: file,
+      });
+
+      if (!result.ok) throw new Error("Upload failed");
+
+      const { storageId } = await result.json();
+      const imageUrl = await convex.query(api.files.getImageUrl, { storageId });
+      if (imageUrl) {
+        editor.chain().focus().setImage({ src: imageUrl }).run();
+      }
+    } catch {
+      toast.error("Erro ao enviar imagem.");
+    } finally {
+      if (imageInputRef.current) imageInputRef.current.value = "";
     }
   };
 
@@ -209,7 +245,7 @@ export function RichTextEditor({ content, onChange, placeholder = "Escreva o con
   };
 
   return (
-    <div className="rounded-2xl border border-zinc-200 bg-white overflow-hidden shadow-sm flex flex-col" style={{ maxHeight: "640px" }}>
+    <div className="rounded-2xl border border-zinc-200 bg-white overflow-hidden shadow-sm flex flex-col" style={{ maxHeight: "440px" }}>
       <style jsx global>{`
         .rich-editor-content {
           min-height: 320px;
@@ -1037,6 +1073,14 @@ export function RichTextEditor({ content, onChange, placeholder = "Escreva o con
       <div className="bg-white overflow-y-auto flex-1">
         <EditorContent editor={editor} />
       </div>
+
+      <input
+        type="file"
+        ref={imageInputRef}
+        onChange={handleImageUpload}
+        accept="image/*"
+        className="hidden"
+      />
     </div>
   );
 }

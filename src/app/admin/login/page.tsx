@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
-import { Logo } from "@/components/logo";
+import Image from "next/image";
 
 export const dynamic = "force-dynamic";
 
@@ -52,7 +52,7 @@ export default function AdminLoginPage() {
         <CardContent className="p-8">
           <div className="text-center mb-8">
             <div className="inline-block mb-6">
-              <Logo variant="dark" />
+              <Image src="/assets/images/logo/logo-admin.svg" alt="Logo" width={200} height={200} />
             </div>
             <p className="text-sm text-zinc-500 mt-2 font-ui">Painel Administrativo</p>
           </div>

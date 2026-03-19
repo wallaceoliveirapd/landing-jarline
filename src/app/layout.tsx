@@ -41,7 +41,15 @@ export async function generateMetadata(): Promise<Metadata> {
     if (seoSettings?.value) {
       if (seoSettings.value.title) seoTitle = seoSettings.value.title;
       if (seoSettings.value.description) seoDescription = seoSettings.value.description;
-      if (seoSettings.value.ogImage) ogImage = seoSettings.value.ogImage;
+      if (seoSettings.value.ogImage) {
+        const raw = seoSettings.value.ogImage;
+        if (raw.startsWith("http")) {
+          ogImage = raw;
+        } else {
+          const resolved = await fetchQuery(api.files.getImageUrl, { storageId: raw });
+          ogImage = resolved ?? undefined;
+        }
+      }
     }
   } catch (error) {
     console.error("Failed to fetch seo settings", error);

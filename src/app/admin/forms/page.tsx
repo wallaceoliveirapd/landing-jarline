@@ -208,47 +208,6 @@ export default function FormsManagementPage() {
           </TableBody>
         </Table>
       </div>
-
-      {/* Admin Feature Highlight */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8">
-        <div className="p-6 sm:p-12 rounded-2xl bg-primary text-white space-y-6 sm:space-y-8 flex flex-col justify-between relative overflow-hidden group">
-          <div className="space-y-4 sm:space-y-6 relative z-10">
-            <div className="size-12 sm:size-14 rounded-2xl bg-white/10 flex items-center justify-center backdrop-blur-xl group-hover:bg-white group-hover:text-primary transition-all duration-700">
-              <Sparkles className="size-5 sm:size-6 shadow-sm" />
-            </div>
-            <div className="space-y-2">
-              <h3 className="text-xl sm:text-3xl font-medium font-ui leading-tight">Análise Preditiva (Jal)</h3>
-              <p className="text-zinc-400 text-sm leading-relaxed max-w-sm">
-                Toda submissão é processada pela Jal Intelligence. O sistema extrai intenções, qualifica o lead e sugere respostas rápidas no seu dashboard de Inbox.
-              </p>
-            </div>
-          </div>
-          <div className="flex items-center gap-4 relative z-10">
-            <div className="h-px flex-1 bg-white/10" />
-            <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-500">Módulo de IA Integrado</span>
-          </div>
-          <div className="absolute -bottom-10 -right-10 size-40 bg-white/5 rounded-full blur-3xl" />
-        </div>
-
-        <div className="p-6 sm:p-12 rounded-2xl border border-zinc-100 bg-white space-y-6 sm:space-y-8 flex flex-col">
-          <div className="space-y-4 sm:space-y-6">
-            <div className="flex items-center gap-3">
-              <div className="h-px w-6 bg-primary" />
-              <h4 className="font-ui font-medium text-zinc-900 text-xl sm:text-3xl">Pronto para Ecossistemas</h4>
-            </div>
-            <div className="grid grid-cols-2 gap-3">
-              {['WhatsApp', 'E-mail SMTP', 'RD Station', 'Google Sheets'].map((int) => (
-                <div key={int} className="px-4 py-4 sm:px-6 sm:py-5 rounded-2xl bg-zinc-50 flex items-center justify-center border border-zinc-100 hover:bg-primary hover:text-white hover:border-primary transition-all duration-500 cursor-pointer group/int">
-                  <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-400 group-hover/int:text-white">{int}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-          <p className="text-[10px] text-zinc-400 text-center uppercase tracking-widest leading-relaxed mt-auto">
-            Integrações via Webhooks e API nativa Convex disponíveis.
-          </p>
-        </div>
-      </div>
     </div>
   );
 }

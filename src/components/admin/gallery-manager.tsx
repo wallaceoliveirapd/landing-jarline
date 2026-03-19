@@ -234,9 +234,9 @@ function GalleryPreviewItem({
   onDragEnd,
 }: GalleryPreviewItemProps) {
   const isDraggingItem = isDragging && dragIndex === index;
-  const isLocalStorageId = item.url && !item.url.startsWith("http");
-  const imageUrlQuery = useQuery(api.files.getImageUrl, isLocalStorageId ? { storageId: item.url } : "skip");
-  const imageUrl = isLocalStorageId ? imageUrlQuery : item.url;
+  const isStorageId = item.url && !item.url.startsWith("http");
+  const resolvedUrl = useQuery(api.files.getImageUrl, isStorageId ? { storageId: item.url } : "skip");
+  const imageUrl = isStorageId ? resolvedUrl : item.url;
 
   return (
     <div

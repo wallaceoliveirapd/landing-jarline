@@ -228,6 +228,40 @@ export default function SubmissionsPage() {
         </div>
       </div>
 
+      {/* Quick Stats */}
+      <div className="grid grid-cols-2 md:grid-cols-3 gap-3 sm:gap-8">
+        <div className="bg-white p-5 sm:p-10 rounded-2xl border border-zinc-100 group hover:border-zinc-200 transition-all shadow-sm">
+          <span className="text-[10px] font-medium uppercase tracking-widest text-zinc-400 font-ui mb-2 block">Total de Respostas</span>
+          <div className="flex items-end justify-between">
+            <p className="text-2xl sm:text-4xl font-medium font-ui text-zinc-900">{submissions?.length || 0}</p>
+            <Inbox className="size-6 sm:size-8 text-zinc-100 group-hover:text-zinc-200 transition-colors" />
+          </div>
+        </div>
+        <div className="bg-white p-5 sm:p-10 rounded-2xl border border-zinc-100 group hover:border-zinc-200 transition-all shadow-sm">
+          <span className="text-[10px] font-medium uppercase tracking-widest text-zinc-400 font-ui mb-2 block">Novos Hoje</span>
+          <div className="flex items-end justify-between">
+            <p className="text-2xl sm:text-4xl font-medium font-ui text-zinc-900">
+              {submissions?.filter((s) => new Date(s.createdAt).toDateString() === new Date().toDateString()).length || 0}
+            </p>
+            <Clock className="size-6 sm:size-8 text-zinc-100 group-hover:text-zinc-200 transition-colors" />
+          </div>
+        </div>
+        <div className="col-span-2 md:col-span-1 bg-primary p-5 sm:p-10 rounded-2xl text-white shadow-xl shadow-primary/20 group overflow-hidden relative">
+          <div className="relative z-10">
+            <span className="text-[10px] font-medium uppercase tracking-widest text-white/50 font-ui mb-2 block">Não Lidos</span>
+            <div className="flex items-end justify-between">
+              <p className="text-2xl sm:text-4xl font-medium font-ui">
+                {submissions?.filter((s) => s.status === "new").length || 0}
+              </p>
+              <Mail className="size-6 sm:size-8 text-white/20" />
+            </div>
+          </div>
+          <div className="absolute top-0 right-0 p-8 opacity-10 group-hover:scale-150 transition-transform duration-1000">
+            <Mail className="size-32" />
+          </div>
+        </div>
+      </div>
+
       {/* Filters */}
       <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 bg-white p-3 sm:p-4 rounded-2xl border border-zinc-100 shadow-sm">
         <div className="relative flex-1">
@@ -480,40 +514,6 @@ export default function SubmissionsPage() {
           )}
         </SheetContent>
       </Sheet>
-
-      {/* Quick Stats */}
-      <div className="grid grid-cols-2 md:grid-cols-3 gap-3 sm:gap-8">
-        <div className="bg-white p-5 sm:p-10 rounded-2xl border border-zinc-100 group hover:border-zinc-200 transition-all shadow-sm">
-          <span className="text-[10px] font-medium uppercase tracking-widest text-zinc-400 font-ui mb-2 block">Total de Respostas</span>
-          <div className="flex items-end justify-between">
-            <p className="text-2xl sm:text-4xl font-medium font-ui text-zinc-900">{submissions?.length || 0}</p>
-            <Inbox className="size-6 sm:size-8 text-zinc-100 group-hover:text-zinc-200 transition-colors" />
-          </div>
-        </div>
-        <div className="bg-white p-5 sm:p-10 rounded-2xl border border-zinc-100 group hover:border-zinc-200 transition-all shadow-sm">
-          <span className="text-[10px] font-medium uppercase tracking-widest text-zinc-400 font-ui mb-2 block">Novos Hoje</span>
-          <div className="flex items-end justify-between">
-            <p className="text-2xl sm:text-4xl font-medium font-ui text-zinc-900">
-              {submissions?.filter((s) => new Date(s.createdAt).toDateString() === new Date().toDateString()).length || 0}
-            </p>
-            <Clock className="size-6 sm:size-8 text-zinc-100 group-hover:text-zinc-200 transition-colors" />
-          </div>
-        </div>
-        <div className="col-span-2 md:col-span-1 bg-primary p-5 sm:p-10 rounded-2xl text-white shadow-xl shadow-primary/20 group overflow-hidden relative">
-          <div className="relative z-10">
-            <span className="text-[10px] font-medium uppercase tracking-widest text-white/50 font-ui mb-2 block">Não Lidos</span>
-            <div className="flex items-end justify-between">
-              <p className="text-2xl sm:text-4xl font-medium font-ui">
-                {submissions?.filter((s) => s.status === "new").length || 0}
-              </p>
-              <Mail className="size-6 sm:size-8 text-white/20" />
-            </div>
-          </div>
-          <div className="absolute top-0 right-0 p-8 opacity-10 group-hover:scale-150 transition-transform duration-1000">
-            <Mail className="size-32" />
-          </div>
-        </div>
-      </div>
     </div>
   );
 }

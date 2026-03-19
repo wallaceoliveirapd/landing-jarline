@@ -17,6 +17,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 export default function PagesManagementPage() {
   const router = useRouter();
@@ -160,9 +161,11 @@ export default function PagesManagementPage() {
                     </div>
                   </TableCell>
                   <TableCell className="text-center">
-                    <code className="text-[10px] bg-zinc-50 px-3 py-1 rounded-lg text-zinc-500 font-mono">
-                      /{page.slug}
-                    </code>
+                    <Link href={`/page/${page.slug}`} target="_blank">
+                      <code className="text-[10px] bg-zinc-50 px-3 py-1 rounded-lg text-zinc-500 font-mono">
+                        /page/{page.slug}
+                      </code>
+                    </Link>
                   </TableCell>
                   <TableCell className="text-center">
                     <button

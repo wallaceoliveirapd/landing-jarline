@@ -16,6 +16,23 @@ import Image from "next/image";
 
 gsap.registerPlugin(ScrollTrigger);
 
+// ─── Project carousel card — resolves coverImage via useQuery ─────────────────
+function ProjectCarouselCard({ project }: { project: any }) {
+  const isStorageId = project.coverImage && !project.coverImage.startsWith("http");
+  const coverUrl = useQuery(api.files.getImageUrl, isStorageId ? { storageId: project.coverImage } : "skip");
+  const bgImage = isStorageId ? (coverUrl || "assets/images/project-1.png") : (project.coverImage || "assets/images/project-1.png");
+  return (
+    <a href={`/projects/${project.slug}`} className="project-card" style={{ textDecoration: "none" }}>
+      <div className="project-card-bg" style={{ backgroundImage: `url('${bgImage}')` }}></div>
+      <div className="project-overlay"></div>
+      <div className="project-info">
+        <p className="project-title">{project.title}</p>
+        <p className="project-desc">{project.category || "Projeto"}{project.subtitle ? " · " + project.subtitle : ""}</p>
+      </div>
+    </a>
+  );
+}
+
 export default function Page() {
   const heroSettings = useQuery(api.settings.getSetting, { key: "hero" });
   const bigNumbersSettings = useQuery(api.settings.getSetting, { key: "bignumbers" });
@@ -111,7 +128,8 @@ export default function Page() {
 
   const hero = previewData?.hero ?? (hasInitiallyLoaded && heroSettings?.value ? heroSettings.value : defaultHero);
   const heroBgStorageId: string | undefined = hero?.heroBgStorageId;
-  const heroBgUploadedUrl = useQuery(api.files.getImageUrl, heroBgStorageId ? { storageId: heroBgStorageId } : "skip");
+  const heroBgIsStorageId = heroBgStorageId && !heroBgStorageId.startsWith("http");
+  const heroBgUploadedUrl = useQuery(api.files.getImageUrl, heroBgIsStorageId ? { storageId: heroBgStorageId } : "skip");
   const bigNumbers = previewData?.bigNumbers ?? (hasInitiallyLoaded && bigNumbersSettings?.value ? bigNumbersSettings.value : defaultBigNumbers);
   const about = previewData?.about ?? (hasInitiallyLoaded && aboutSettings?.value ? aboutSettings.value : defaultAbout);
   const services = previewData?.services ?? (hasInitiallyLoaded && servicesSettings?.value ? servicesSettings.value : defaultServices);
@@ -487,14 +505,7 @@ export default function Page() {
             <div className="carousel-wrap">
               <div className="carousel" id="carousel">
                 {projectsList?.filter((p: any) => p.status === "published").slice(0, 5).map((project: any) => (
-                  <div className="project-card" key={project._id}>
-                    <div className="project-card-bg" style={{ backgroundImage: "url('" + (project.coverImage || "assets/images/project-1.png") + "')" }}></div>
-                    <div className="project-overlay"></div>
-                    <div className="project-info">
-                      <p className="project-title">{project.title}</p>
-                      <p className="project-desc">{project.category || "Projeto"}{project.subtitle ? " · " + project.subtitle : ""}</p>
-                    </div>
-                  </div>
+                  <ProjectCarouselCard key={project._id} project={project} />
                 ))}
               </div>
             </div>

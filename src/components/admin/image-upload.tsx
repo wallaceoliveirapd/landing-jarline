@@ -12,7 +12,7 @@ interface ImageUploadProps {
   onChange: (storageId: string) => void;
   label?: string;
   description?: string;
-  aspectRatio?: "video" | "square" | "portrait";
+  aspectRatio?: "video" | "square" | "portrait" | "landscape";
 }
 
 export function ImageUpload({ value, onChange, label, description, aspectRatio = "video" }: ImageUploadProps) {
@@ -20,10 +20,9 @@ export function ImageUpload({ value, onChange, label, description, aspectRatio =
   const generateUploadUrl = useMutation(api.files.generateUploadUrl);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // Resolve storageId to public URL
-  const isLocalStorageId = value && !value.startsWith("http");
-  const imageUrlQuery = useQuery(api.files.getImageUrl, isLocalStorageId ? { storageId: value } : "skip");
-  const imageUrl = isLocalStorageId ? imageUrlQuery : value;
+  const isStorageId = !!value && !value.startsWith("http");
+  const resolvedUrl = useQuery(api.files.getImageUrl, isStorageId ? { storageId: value! } : "skip");
+  const imageUrl = isStorageId ? resolvedUrl : value;
 
   const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -61,7 +60,8 @@ export function ImageUpload({ value, onChange, label, description, aspectRatio =
   const aspectRatioClass = {
     video: "aspect-video",
     square: "aspect-square",
-    portrait: "aspect-[3/4]"
+    portrait: "aspect-[3/4]",
+    landscape: "aspect-[16/5]"
   }[aspectRatio];
 
   return (
